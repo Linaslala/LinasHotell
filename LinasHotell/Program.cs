@@ -1,10 +1,13 @@
-﻿namespace LinasHotell
+﻿using static System.Net.Mime.MediaTypeNames;
+
+namespace LinasHotell
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            var app = new Application();
+            app.Run();
         }
     }
 }
