@@ -1,14 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.IO;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace LinasHotell.Builders
+namespace LinasHotell
 {
     public class ApplicationDbContextFactory
-       : IDesignTimeDbContextFactory<ApplicationDbContext>
+        : IDesignTimeDbContextFactory<ApplicationDbContext>
     {
         public ApplicationDbContext CreateDbContext(string[] args)
         {
@@ -17,11 +15,12 @@ namespace LinasHotell.Builders
                 .AddJsonFile("appsettings.json", optional: false)
                 .Build();
 
-            var connString = configuration.GetConnectionString("DefaultConnection")
-                ?? throw new InvalidOperationException("Connection string 'DefaultConnection' saknas.");
+            var connectionString = configuration.GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException(
+                    "Connection string 'DefaultConnection' saknas.");
 
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseSqlServer(connString)
+                .UseSqlServer(connectionString)
                 .Options;
 
             return new ApplicationDbContext(options);

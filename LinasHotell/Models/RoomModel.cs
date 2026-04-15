@@ -1,21 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
-using LinasHotell.GlobalUtilities.SoftDelete;
 
 namespace LinasHotell.Models 
 {
     [Table("Rooms")]
     [PrimaryKey(nameof(RoomId))]
-    public class RoomModel : ISoftDelete
+    public class RoomModel
     {
         public int RoomId { get; set; }
 
         [Required, MaxLength(20)]
-        public int RoomNumber { get; set; } = 0;
+        public int RoomNumber { get; set; } 
 
         [Required]
         public RoomTypeEnums RoomType { get; set; }
@@ -26,11 +22,16 @@ namespace LinasHotell.Models
 
         [Required]
         [Range(0,2)]
-        public int ExtraBedsAllowed { get; set; } = 0;
+        public int ExtraBedsAllowed { get; set; } 
 
-        [Required]
-        public bool IsDeleted { get; set; }
+        public DateTime Deleted { get; set; }
 
         //public List<BookingModel> Bookings { get; set; } = new();
     }
+}
+public enum RoomTypeEnums
+{
+    Single = 1,
+    Double = 2,
+    Suite = 3
 }

@@ -1,9 +1,6 @@
-﻿using LinasHotell.Builders;
+﻿
 using LinasHotell.Models;
-using LinasHotell.Repositorys.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using LinasHotell.Repositories.Interfaces;
 
 namespace LinasHotell.Repositorys
 {
@@ -36,15 +33,18 @@ namespace LinasHotell.Repositorys
             _db.SaveChanges();
         }
 
-        public void Delete(int roomId)
+        public void Delete(RoomModel rummet)
         {
-            var room = _db.Rooms.Find(roomId);
+            var room = _db.Rooms.Find(rummet.RoomId);
 
-            if (room != null)
+            if (room is null)
             {
-                _db.Rooms.Remove(room);
-                _db.SaveChanges();
+
             }
+
+            room.Deleted = DateTime.Now;
+
+            Update(room);
         }
     }
 }
