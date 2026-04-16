@@ -1,50 +1,68 @@
-﻿
-using LinasHotell.Models;
+﻿using LinasHotell.Models;
 using LinasHotell.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace LinasHotell.Repositorys
 {
-    public class RoomRepository : IRoomRepository
+    public class RoomRepository
     {
         private readonly ApplicationDbContext _db;
 
         public RoomRepository(ApplicationDbContext db) => _db = db;
 
-        public RoomModel? GetById(int roomId) => _db.Rooms.Find(roomId);
-
-        public RoomModel? GetByRoomNumber(int roomNumber) =>
-            _db.Rooms.FirstOrDefault(r => r.RoomNumber == roomNumber);
-
-        public List<RoomModel> GetAll() => _db.Rooms
-            .OrderBy(r => r.RoomId)
-            .ToList();
-
-        public RoomModel Add(RoomModel room)
+        public async Task<RoomModel?> GetByIdAsync(int roomId)
         {
-            _db.Rooms.Add(room);
-            _db.SaveChanges();
+            var room = await _db.Rooms
+                .Where(r => r.RoomId == roomId)
+                .FirstOrDefaultAsync();
+
+            return room;
+        }
+        public async Task<RoomModel?> GetByRoomNumberAsync(int roomNumber)
+        {
+            var room = await _db.Rooms
+             .Where(r => r.RoomNumber == roomNumber)
+             .FirstOrDefaultAsync();
 
             return room;
         }
 
-        public void Update(RoomModel room)
+        public async Task<List<RoomModel>> GetAllAsync()
         {
-            _db.Rooms.Update(room);
-            _db.SaveChanges();
+            var rooms = await _db.Rooms
+                .OrderBy(r => r.RoomId)
+                .ToListAsync();
+
+            return rooms;
         }
 
-        public void Delete(RoomModel rummet)
+        public async Task<RoomModel> AddAsync(RoomModel room)
         {
-            var room = _db.Rooms.Find(rummet.RoomId);
+            _db.Rooms.Add(room);
+            await _db.SaveChangesAsync();
 
-            if (room is null)
-            {
+            return room;
+        }
 
-            }
+        public async Task UpdateAsync(RoomModel room)
+        {
+            _db.Rooms.Update(room);
+            await _db.SaveChangesAsync();
+        }
 
-            room.Deleted = DateTime.Now;
+        public async Task<RoomModel?> SetBookableStatusAsync(int roomId, bool isBookable)
+        {
+            var room = await GetByIdAsync(roomId);
 
-            Update(room);
+            if (room is null) return null;
+
+            if (room.IsBookable == isBookable)
+                return room;
+
+            room.IsBookable = isBookable;
+            await UpdateAsync(room);
+
+            return room;
         }
     }
 }

@@ -24,7 +24,7 @@ namespace LinasHotell.Models
         [Range(0,2)]
         public int ExtraBedsAllowed { get; set; } 
 
-        public DateTime Deleted { get; set; }
+        public bool IsBookable { get; set; }
 
         //public List<BookingModel> Bookings { get; set; } = new();
     }
