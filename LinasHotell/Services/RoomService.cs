@@ -3,7 +3,7 @@ using LinasHotell.Repositories.Interfaces;
 
 namespace LinasHotell.Services
 {
-    public class RoomService
+    public class RoomService : IRoomService
     {
         private readonly IRoomRepository _roomRepository;
 
@@ -12,12 +12,12 @@ namespace LinasHotell.Services
             _roomRepository = roomRepository;
         }
 
-        public async Task<List<RoomModel>>? GetAllRoomsAsync()
+        public async Task<List<RoomModel>> GetAllRoomsAsync()
         {
             return await _roomRepository.GetAllAsync();
         }
 
-        public async Task<RoomModel>? GetRoomByIdAsync(int roomId)
+        public async Task<RoomModel?> GetRoomByIdAsync(int roomId)
         {
             return await _roomRepository.GetByIdAsync(roomId);
         }
@@ -38,7 +38,7 @@ namespace LinasHotell.Services
             var roomExists = rooms.Any(r => r.RoomNumber == room.RoomNumber);
 
             if (roomExists)
-                throw new Exception("Ett rum med detta rumsnummer finns redan.");
+                throw new InvalidOperationException("Ett rum med detta rumsnummer finns redan.");
 
             await _roomRepository.UpdateAsync(room);
         }

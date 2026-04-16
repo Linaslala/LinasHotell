@@ -1,22 +1,62 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using LinasHotell.Controllers;
+using Spectre.Console;
 
 namespace LinasHotell.UIMenus
 {
-    internal class RoomMenu
-    {
-        public static int ShowRoomMenu()
-        {
-            Console.WriteLine("=== Rum ===\n");
-            Console.WriteLine("1. Skapa rum");
-            Console.WriteLine("2. Lista rum");
-            Console.WriteLine("3. Uppdatera rum");
-            Console.WriteLine("4. Ta bort rum");
-            Console.WriteLine("0. Tillbaka");
-            Console.Write("\nVälj: ");
 
-            return int.TryParse(Console.ReadLine(), out var select) ? select : -1;
+    public class RoomMenu
+    {
+        private readonly RoomController _roomController;
+
+        public RoomMenu(RoomController roomController)
+        {
+            _roomController = roomController;
         }
+
+
+        public async Task ShowRoomMenuAsync()
+        {
+            while (true)
+            {
+                var choice = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("Välj:")
+                    .AddChoices(
+                        "Visa alla rum",
+                        "Skapa nytt rum",
+                        "Uppdatera befintligt rum",
+                        "Inaktivera rum",
+                        "Tillbaka till lobbyn"));
+
+                switch (choice)
+                {
+                    case "Visa alla rum":
+                        await _roomController.ShowAllRoomsAsync();
+                        break;
+
+                    case "Skapa nytt rum":
+                        await _roomController.AddRoomAsync();
+                        break;
+
+                    case "Uppdatera befintligt rum":
+                        await _roomController.UpdateRoomAsync();
+                        break;
+
+                    case "Inaktivera rum":
+                        await _roomController.SetBookableRoomStatusAsync();
+                        break;
+
+                    case "Tillbaka till lobbyn":
+                        break;
+                }
+            }
+            
+        }
+    }
+
+    public enum RoomMenuResult
+    {
+        Stay,
+        BackToLobby
     }
 }

@@ -28,16 +28,15 @@ namespace LinasHotell.Models
 
         //public List<BookingModel> Bookings { get; set; } = new();
 
-        //public override string ToString()
-        //{
-        //    return
-        //        $"RumsId: {RoomId}, " +
-        //        $"Rumsnummer: {RoomNumber}, " +
-        //        $"RumsTyp: {RoomType}, " +
-        //        $"Pris per natt: {PricePerNight}, " +
-        //        $"Tillåtet antal extrasängar: {ExtraBedsAllowed}, "; /*+*/
-        //    //$"Aktuella bokningar: {List<Bookings>}";
-        //}
+        public override string ToString()
+        {
+            return
+                $"Rumsnummer: {RoomNumber}, " +
+                $"RumsTyp: {RoomType}, " +
+                $"Pris per natt: {PricePerNight}, " +
+                $"Tillåtet antal extrasängar: {ExtraBedsAllowed}, "; /*+*/
+            //$"Aktuella bokningar: {List<Bookings>}";
+        }
     }
 }
 

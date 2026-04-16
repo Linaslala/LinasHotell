@@ -1,14 +1,16 @@
 ﻿using LinasHotell.Models;
 using LinasHotell.Services;
+using Microsoft.IdentityModel.Tokens;
+using Spectre.Console;
 using System.Globalization;
 
 namespace LinasHotell.Controllers
 {
     public class RoomController
     {
-        private readonly RoomService _roomService;
+        private readonly IRoomService _roomService;
 
-        public RoomController(RoomService roomService)
+        public RoomController(IRoomService roomService)
         {
             _roomService = roomService;
         }
@@ -17,19 +19,31 @@ namespace LinasHotell.Controllers
         {
             var rooms = await _roomService.GetAllRoomsAsync();
 
-            if (!rooms.Any())
+            if (rooms.IsNullOrEmpty())
             {
-                Console.WriteLine("Det finns inga rum.");
-                return;
+                AnsiConsole.MarkupLine("[Red]Det finns inga rum[/]");
+            }
+            else
+            {
+                var table = new Table();
+
+                table.AddColumn("Rumsnummer");
+                table.AddColumn("Rumstyp");
+                table.AddColumn("Pris/natt");
+                table.AddColumn("Max antal extrasängar");
+                table.AddColumn("Bokingsbar");
+
+                foreach (var room in rooms)
+                {
+                    table.AddRow(room.RoomNumber.ToString(), room.RoomType.ToString(), room.PricePerNight.ToString(), room.ExtraBedsAllowed.ToString(), room.IsBookable ? "Ja" : "Nej");
+                }
+
+                AnsiConsole.Write(table);
             }
 
-            //SPECTRE TABLE
-            Console.WriteLine("=== Rummen ===\n");
-
-            foreach (var room in rooms)
-            {
-                Console.WriteLine(room);
-            }
+            Console.WriteLine("Tryck valfri tangent för att återgå till rumsmenyn:");
+            Console.ReadKey();
+            Console.Clear();
         }
 
         public async Task ShowRoomDetailsAsync()
@@ -273,15 +287,28 @@ namespace LinasHotell.Controllers
                 Console.WriteLine("Ogiltigt svar. Ange J/j eller N/n.");
             }
 
-            await _roomService.UpdateRoomAsync(room);
+            try
+            {
+                await _roomService.UpdateRoomAsync(room);
+                Console.WriteLine("Rum uppdaterat!");
 
-            Console.WriteLine("Rum uppdaterat!");
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
 
             //SKRIV UT SAMMANFATTNING AV UPPDATERINGEN
         }
         public async Task SetBookableRoomStatusAsync()
-
         {
+            //SPECTRE TABLE FÖR ATT VÄLJA RUM
+
             Console.Write("Ange rumsId för att ändra status på tillgänglighet: ");
 
             if (!int.TryParse(Console.ReadLine(), out var roomId))
