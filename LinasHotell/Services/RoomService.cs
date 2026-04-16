@@ -22,5 +22,16 @@ namespace LinasHotell.Services
             return await _roomRepository.GetByIdAsync(roomId);
         }
 
+        public async Task<RoomModel> AddRoomAsync(RoomModel room)
+        {
+            var rooms = await _roomRepository.GetAllAsync();
+            var roomExists = rooms.Any(r => r.RoomNumber == room.RoomNumber);
+
+            if (roomExists)
+                throw new Exception("Ett rum med detta rumsnummer finns redan.");
+
+            return await _roomRepository.AddAsync(room);
+        }
     }
 }
+
