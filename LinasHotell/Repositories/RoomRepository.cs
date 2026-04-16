@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LinasHotell.Repositorys
 {
-    public class RoomRepository
+    public class RoomRepository : IRoomRepository
     {
         private readonly ApplicationDbContext _db;
 
