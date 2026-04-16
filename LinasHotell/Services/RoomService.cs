@@ -24,21 +24,21 @@ namespace LinasHotell.Services
 
         public async Task<RoomModel> AddRoomAsync(RoomModel room)
         {
-            var rooms = await _roomRepository.GetAllAsync();
-            var roomExists = rooms.Any(r => r.RoomNumber == room.RoomNumber);
+            //var rooms = await _roomRepository.GetAllAsync();
+            //var roomExists = rooms.Any(r => r.RoomNumber == room.RoomNumber);
 
-            if (roomExists)
-                throw new Exception("Ett rum med detta rumsnummer finns redan.");
+            //if (roomExists)
+            //    throw new Exception("Ett rum med detta rumsnummer finns redan.");
 
             return await _roomRepository.AddAsync(room);
         }
         public async Task UpdateRoomAsync(RoomModel room)
         {
-            var rooms = await _roomRepository.GetAllAsync();
-            var roomExists = rooms.Any(r => r.RoomNumber == room.RoomNumber);
+            //var rooms = await _roomRepository.GetAllAsync();
+            //var roomExists = rooms.Any(r => r.RoomNumber == room.RoomNumber);
 
-            if (roomExists)
-                throw new InvalidOperationException("Ett rum med detta rumsnummer finns redan.");
+            //if (roomExists)
+            //    throw new InvalidOperationException("Ett rum med detta rumsnummer finns redan.");
 
             await _roomRepository.UpdateAsync(room);
         }

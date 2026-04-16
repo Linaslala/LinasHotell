@@ -33,7 +33,7 @@ namespace LinasHotell.Controllers
                 table.AddColumn("Max antal extrasängar");
                 table.AddColumn("Bokingsbar");
 
-                foreach (var room in rooms)
+                foreach (var room in rooms.OrderBy(r => r.RoomNumber))
                 {
                     table.AddRow(room.RoomNumber.ToString(), room.RoomType.ToString(), room.PricePerNight.ToString(), room.ExtraBedsAllowed.ToString(), room.IsBookable ? "Ja" : "Nej");
                 }
@@ -46,131 +46,92 @@ namespace LinasHotell.Controllers
             Console.Clear();
         }
 
-        public async Task ShowRoomDetailsAsync()
-        {
-            //SPECTRE TABLE ÖVER ALLA RUM: STYR MED PILTANGENTER FÖR ATT VÄLJA RUMSDETALJER
-
-            Console.WriteLine("Ange rumsId för att se rummet: ");
-
-            if (int.TryParse(Console.ReadLine(), out var roomId))
-            {
-                var room = await _roomService.GetRoomByIdAsync(roomId);
-
-                if (room != null)
-                {
-                    Console.WriteLine($"\n=== Rummet ===\n{room}");
-                }
-                else
-                {
-                    Console.WriteLine("Rummet du söker finns inte.");
-                }
-            }
-            else
-            {
-                Console.WriteLine("Ogiltligt rumsId.");
-            }
-        }
-
         public async Task AddRoomAsync()
         {
-            int roomNumber;
-            RoomTypeEnums roomType;
-            decimal pricePerNight;
-            int extraBedsAllowed;
-            bool isBookable;
+            var room = new RoomModel();
 
-            Console.WriteLine("=== REGISTRERA NYTT RUM ===\n");
+            var existingRooms = await _roomService.GetAllRoomsAsync();
 
-            while (true)
+            var roomNumber = AnsiConsole.Prompt(
+                new TextPrompt<int>("Ange [green]rumsnummer[/]:")
+                    .Validate(number =>
+                    {
+                        if (number < 1 || number > 999)
+                            return ValidationResult.Error("Rumsnummer måste vara mellan 1 och 999.");
+
+                        if (existingRooms.Any(r => r.RoomNumber == number))
+                            return ValidationResult.Error("Rumsnumret finns redan.");
+
+                        return ValidationResult.Success();
+                    })
+            );
+
+            room.RoomNumber = roomNumber;
+
+            var roomType = AnsiConsole.Prompt(
+                new SelectionPrompt<RoomTypeEnums>()
+                    .Title("Ange [green]rumstyp[/]:")
+                    .AddChoices(
+                        RoomTypeEnums.Single,
+                        RoomTypeEnums.Double,
+                        RoomTypeEnums.Suite)
+            );
+
+            room.RoomType = roomType;
+
+            var pricePerNight = AnsiConsole.Prompt(
+                new TextPrompt<decimal>("Ange [green]pris per natt[/]:")
+                    .Validate(price =>
+                        price >= 1
+                            ? ValidationResult.Success()
+                            : ValidationResult.Error("Priset måste vara minst 1 kr."))
+                    .Culture(CultureInfo.CurrentCulture)
+            );
+
+            room.PricePerNight = pricePerNight;
+
+            int maxExtraBeds = roomType switch
             {
-                Console.Write("Ange rumsnummer: ");
-                var roomNumberInput = Console.ReadLine();
-
-                if (int.TryParse(roomNumberInput, out roomNumber) &&
-                                    roomNumber >= 1 &&
-                                    roomNumber <= 999)
-                {
-                    break;
-                }
-
-                Console.WriteLine("Felaktigt rumsnummer. Ange endast siffror mellan 1 och 999.");
-            }
-
-            while (true)
-            {
-                Console.WriteLine("Ange rumstyp:\n");
-                Console.WriteLine("1 = Single");
-                Console.WriteLine("2 = Double");
-                Console.WriteLine("3 = Suite");
-                var roomTypeInput = Console.ReadLine();
-
-                if (int.TryParse(roomTypeInput, out var value) &&
-                                        Enum.IsDefined(typeof(RoomTypeEnums), value))
-                {
-                    roomType = (RoomTypeEnums)value;
-                    break;
-                }
-
-                Console.WriteLine("Ogiltig rumstyp. Ange 1, 2 eller 3.");
-            }
-
-            while (true)
-            {
-                Console.Write("Ange pris per natt: ");
-                var pricePerNightInput = Console.ReadLine();
-
-                var normalized = pricePerNightInput.Trim().Replace('.', ',');
-
-                if (decimal.TryParse(normalized, NumberStyles.Number, CultureInfo.CurrentCulture, out pricePerNight)
-                    && pricePerNight >= 1)
-                {
-                    break;
-                }
-
-                Console.WriteLine("Felaktigt pris. Ange endast ett positivt belopp i siffror.");
-            }
-
-            while (true)
-            {
-                Console.Write("Ange extra sängar (0-2): ");
-                var extraBedsAllowedInput = Console.ReadLine();
-
-                if (int.TryParse(extraBedsAllowedInput, out extraBedsAllowed)
-                     && extraBedsAllowed >= 0 && extraBedsAllowed <= 2)
-                {
-                    break;
-                }
-
-                Console.WriteLine("Max två extrasängar är tillåtet. Ange en siffra.");
-            }
-
-            while (true)
-            {
-                Console.WriteLine("Är rummet reod för bokningar? (J/N)");
-                var isBookableInput = (Console.ReadLine() ?? "").Trim().ToLower();
-
-
-                if (isBookableInput == "j") { isBookable = true; break; }
-                if (isBookableInput == "n") { isBookable = false; break; }
-
-                Console.WriteLine("Ogiltigt svar. Ange J/j eller N/n.");
-            }
-
-            var room = new RoomModel
-            {
-                RoomNumber = roomNumber,
-                RoomType = roomType,
-                PricePerNight = pricePerNight,
-                ExtraBedsAllowed = extraBedsAllowed,
-                IsBookable = isBookable
+                RoomTypeEnums.Double => 1,
+                RoomTypeEnums.Suite => 2,
+                _ => 0
             };
+
+            if (roomType != RoomTypeEnums.Single)
+            {
+                var extraBedsAllowed = AnsiConsole.Prompt(
+                new TextPrompt<int>($"Ange [green]extra sängar[/] (0–{maxExtraBeds}):")
+                    .Validate(beds =>
+                        beds >= 0 && beds <= maxExtraBeds
+                            ? ValidationResult.Success()
+                            : ValidationResult.Error($"För {roomType} är max {maxExtraBeds} extrasäng(ar).")));
+
+                room.ExtraBedsAllowed = extraBedsAllowed;
+            }
+
+            var isBookable = AnsiConsole.Prompt(
+                new SelectionPrompt<bool>()
+                    .Title("Är rummet redo för bokningar?")
+                    .AddChoices(true, false)
+                    .UseConverter(value => value ? "Ja" : "Nej")
+            );
+
+            room.IsBookable = isBookable;
 
             await _roomService.AddRoomAsync(room);
 
-            Console.WriteLine("Nytt rum tillagt!");
+            AnsiConsole.MarkupLine("[green]Rummet har skapats![/]");
 
-            //SKRIV UT SAMMANSTÄLLNING AV NYTT RUM
+            AnsiConsole.MarkupLine($"Rumsnummer: {room.RoomNumber}, " +
+                $"Typ: {room.RoomType}, Pris: {room.PricePerNight} kr/natt, " +
+                $"Möjligt antal extrasängar: {room.ExtraBedsAllowed}, " +
+                $"Bokningsbart: {room.IsBookable}");
+
+            AnsiConsole.MarkupLine("\nTryck valfri tangent för att återgå till rumsmenyn.");
+            AnsiConsole.Console.Input.ReadKey(false);
+            AnsiConsole.Clear();
         }
+
         public async Task UpdateRoomAsync()
         {
             Console.WriteLine("\nAnge rumsId på det rum du vill uppdatera:");
@@ -220,7 +181,7 @@ namespace LinasHotell.Controllers
 
                 var newRoomTypeInput = Console.ReadLine();
 
-                if (string.IsNullOrWhiteSpace(newRoomTypeInput))
+                if (!string.IsNullOrWhiteSpace(newRoomTypeInput))
                     break;
 
                 if (int.TryParse(newRoomTypeInput, out var value) &&

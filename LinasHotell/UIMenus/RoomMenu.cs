@@ -47,7 +47,7 @@ namespace LinasHotell.UIMenus
                         break;
 
                     case "Tillbaka till lobbyn":
-                        break;
+                        return;
                 }
             }
             
