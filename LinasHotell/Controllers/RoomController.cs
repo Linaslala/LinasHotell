@@ -280,8 +280,25 @@ namespace LinasHotell.Controllers
             //SKRIV UT SAMMANFATTNING AV UPPDATERINGEN
         }
         public async Task SetBookableRoomStatusAsync()
-        {
 
+        {
+            Console.Write("Ange rumsId för att ändra status på tillgänglighet: ");
+
+            if (!int.TryParse(Console.ReadLine(), out var roomId))
+            {
+                Console.WriteLine("Ogiltigt rumsId.");
+                return;
+            }
+
+            var room = await _roomService.SetBookableRoomStatusAsync(roomId, false);
+
+            if (room == null)
+            {
+                Console.WriteLine("Rummet hittades inte.");
+                return;
+            }
+
+            Console.WriteLine($"Rum {room.RoomNumber} är nu EJ bokningsbart.");
         }
     }
 }

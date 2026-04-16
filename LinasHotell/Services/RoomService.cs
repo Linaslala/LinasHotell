@@ -40,7 +40,12 @@ namespace LinasHotell.Services
             if (roomExists)
                 throw new Exception("Ett rum med detta rumsnummer finns redan.");
 
-           await _roomRepository.UpdateAsync(room);
+            await _roomRepository.UpdateAsync(room);
+        }
+
+        public async Task<RoomModel?> SetBookableRoomStatusAsync(int roomId, bool isBookable)
+        {
+            return await _roomRepository.SetBookableStatusAsync(roomId, isBookable);
         }
     }
 }
