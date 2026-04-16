@@ -1,9 +1,6 @@
 ﻿using LinasHotell.Models;
-using LinasHotell.Repositories.Interfaces;
 using LinasHotell.Services;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Globalization;
 
 namespace LinasHotell.Controllers
 {
@@ -68,6 +65,8 @@ namespace LinasHotell.Controllers
             int extraBedsAllowed;
             bool isBookable;
 
+            Console.WriteLine("=== REGISTRERA NYTT RUM ===\n");
+
             while (true)
             {
                 Console.Write("Ange rumsnummer: ");
@@ -106,7 +105,9 @@ namespace LinasHotell.Controllers
                 Console.Write("Ange pris per natt: ");
                 var pricePerNightInput = Console.ReadLine();
 
-                if (decimal.TryParse(pricePerNightInput, out pricePerNight) 
+                var normalized = pricePerNightInput.Trim().Replace('.', ',');
+
+                if (decimal.TryParse(normalized, NumberStyles.Number, CultureInfo.CurrentCulture, out pricePerNight)
                     && pricePerNight >= 1)
                 {
                     break;
@@ -121,7 +122,7 @@ namespace LinasHotell.Controllers
                 var extraBedsAllowedInput = Console.ReadLine();
 
                 if (int.TryParse(extraBedsAllowedInput, out extraBedsAllowed)
-                    && extraBedsAllowed <= 2)
+                     && extraBedsAllowed >= 0 && extraBedsAllowed <= 2)
                 {
                     break;
                 }
@@ -155,6 +156,132 @@ namespace LinasHotell.Controllers
             Console.WriteLine("Nytt rum tillagt!");
 
             //SKRIV UT SAMMANSTÄLLNING AV NYTT RUM
+        }
+        public async Task UpdateRoomAsync()
+        {
+            Console.WriteLine("\nAnge rumsId på det rum du vill uppdatera:");
+
+            if (!int.TryParse(Console.ReadLine(), out var roomId))
+            {
+                Console.WriteLine("Ogiltigt rumsId. Ange ett heltal.");
+                return;
+            }
+
+            var room = await _roomService.GetRoomByIdAsync(roomId);
+
+            if (room == null)
+            {
+                Console.WriteLine("Rummet du söker finns inte.");
+                return;
+            }
+
+            Console.WriteLine($"\n=== Nuvarande rum ===\n{room}\n");
+
+            while (true)
+            {
+                Console.Write($"Ange nytt rumsnummer (lämna blankt för att behålla nuvarande {room.RoomNumber}): ");
+                var newRoomNumberInput = Console.ReadLine();
+
+
+                if (string.IsNullOrWhiteSpace(newRoomNumberInput))
+                    break;
+
+                if (int.TryParse(newRoomNumberInput, out var newRoomNumber) &&
+                                    newRoomNumber >= 1 &&
+                                    newRoomNumber <= 999)
+                {
+                    room.RoomNumber = newRoomNumber;
+                    break;
+                }
+
+                Console.WriteLine("Felaktigt rumsnummer. Ange endast siffror mellan 1 och 999.");
+            }
+
+            while (true)
+            {
+                Console.WriteLine($"Ange ny rumstyp (lämna blankt för att behålla nuvarande: {room.RoomType}):\n");
+                Console.WriteLine("1 = Single");
+                Console.WriteLine("2 = Double");
+                Console.WriteLine("3 = Suite");
+
+                var newRoomTypeInput = Console.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(newRoomTypeInput))
+                    break;
+
+                if (int.TryParse(newRoomTypeInput, out var value) &&
+                    Enum.IsDefined(typeof(RoomTypeEnums), value))
+                {
+                    room.RoomType = (RoomTypeEnums)value;
+                    break;
+                }
+
+                Console.WriteLine("Ogiltig rumstyp. Ange 1, 2 eller 3.");
+            }
+
+            while (true)
+            {
+                Console.Write($"Ange nytt pris per natt (lämna blankt för att behålla nuvarande: {room.PricePerNight}kr/natt): ");
+                var newPricePerNightInput = Console.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(newPricePerNightInput))
+                    break;
+
+                var normalized = newPricePerNightInput.Trim().Replace('.', ',');
+
+                if (decimal.TryParse(normalized, NumberStyles.Number, CultureInfo.CurrentCulture, out var newPricePerNight)
+                    && newPricePerNight >= 1)
+                {
+                    room.PricePerNight = newPricePerNight;
+                    break;
+                }
+
+                Console.WriteLine("Felaktigt pris. Ange endast ett positivt belopp i siffror.");
+            }
+
+            while (true)
+            {
+                Console.Write($"Ange nytt antal extra sängar (0-2, lämna blankt för att behålla nuvarande: {room.ExtraBedsAllowed}): ");
+                var newExtraBedsAllowedInput = Console.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(newExtraBedsAllowedInput))
+                    break;
+
+                if (int.TryParse(newExtraBedsAllowedInput, out var newExtraBedsAllowed)
+                   && newExtraBedsAllowed >= 0 && newExtraBedsAllowed <= 2)
+                {
+
+                    room.ExtraBedsAllowed = newExtraBedsAllowed;
+                    break;
+
+                }
+
+                Console.WriteLine("Max två extrasängar är tillåtet. Ange 0, 1 eller 2.");
+            }
+
+            while (true)
+            {
+                Console.WriteLine($"Är rummet reod för bokningar? (J/N), Lämna blankt för att behålla nuvarande: {room.IsBookable}");
+                var newIsBookableInput = (Console.ReadLine() ?? "").Trim().ToLower();
+
+                if (string.IsNullOrWhiteSpace(newIsBookableInput))
+                    break;
+
+                if (newIsBookableInput == "j") { room.IsBookable = true; break; }
+                if (newIsBookableInput == "n") { room.IsBookable = false; break; }
+
+                Console.WriteLine("Ogiltigt svar. Ange J/j eller N/n.");
+            }
+
+            await _roomService.UpdateRoomAsync(room);
+
+            Console.WriteLine("Rum uppdaterat!");
+
+            //SKRIV UT SAMMANFATTNING AV UPPDATERINGEN
+        }
+        public async Task SetBookableRoomStatusAsync()
+        {
+
         }
     }
 }
