@@ -1,4 +1,5 @@
-﻿using LinasHotell.Repositories.Interfaces;
+﻿using LinasHotell.Models;
+using LinasHotell.Repositories.Interfaces;
 using LinasHotell.Services;
 using System;
 using System.Collections.Generic;
@@ -57,6 +58,39 @@ namespace LinasHotell.Controllers
             {
                 Console.WriteLine("Ogiltligt rumsId.");
             }
+        }
+
+        public async Task AddRoomAsync()
+        {
+            Console.WriteLine("Ange rumsnummer: ");
+            var roomNumber = Console.ReadLine();
+
+            Console.WriteLine("Ange rumstyp (single, double eller suite) ");
+            var roomType = Console.ReadLine();
+
+            Console.WriteLine("Ange pris per natt: ");
+            var pricePerNight = Console.ReadLine();
+
+            Console.WriteLine("Ange hur många extrasängar som tillåts (max 2): ");
+            var extraBedsAllowed = Console.ReadLine();
+
+
+            if (new[] { roomNumber, roomType, pricePerNight, extraBedsAllowed }
+                .Any(string.IsNullOrWhiteSpace))
+            {
+                Console.WriteLine("Inga fält får vara tomma.");
+            }
+
+            try
+            {
+                var room = new RoomModel
+                {
+
+                }
+            }
+
+
+
         }
     }
 }

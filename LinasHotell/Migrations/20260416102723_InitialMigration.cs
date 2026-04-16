@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -21,7 +20,7 @@ namespace LinasHotell.Migrations
                     RoomType = table.Column<int>(type: "int", nullable: false),
                     PricePerNight = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     ExtraBedsAllowed = table.Column<int>(type: "int", nullable: false),
-                    Deleted = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    IsBookable = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {

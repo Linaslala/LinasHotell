@@ -27,8 +27,20 @@ namespace LinasHotell.Models
         public bool IsBookable { get; set; }
 
         //public List<BookingModel> Bookings { get; set; } = new();
+
+        public override string ToString()
+        {
+            return
+                $"RumsId: {RoomId}, " +
+                $"Rumsnummer: {RoomNumber}, " +
+                $"RumsTyp: {RoomType}, " +
+                $"Pris per natt: {PricePerNight}, " +
+                $"Tillåtet antal extrasängar: {ExtraBedsAllowed}, "; /*+*/
+            //$"Aktuella bokningar: {List<Bookings>}";
+        }
     }
 }
+
 public enum RoomTypeEnums
 {
     Single = 1,
