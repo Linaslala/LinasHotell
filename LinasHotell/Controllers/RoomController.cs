@@ -19,6 +19,12 @@ namespace LinasHotell.Controllers
         {
             var rooms = await _roomService.GetAllRoomsAsync();
 
+            if (!rooms.Any())
+            {
+                Console.WriteLine("Det finns inga rum.");
+                return;
+            }
+
             //SPECTRE TABLE
             Console.WriteLine("=== Rummen ===\n");
 
@@ -28,7 +34,29 @@ namespace LinasHotell.Controllers
             }
         }
 
+        public async Task ShowRoomDetailsAsync()
+        {
+            //SPECTRE TABLE ÖVER ALLA RUM: STYR MED PILTANGENTER FÖR ATT VÄLJA RUMSDETALJER
+            
+            Console.WriteLine("Ange rumsId för att se rummet");
 
+            if (int.TryParse(Console.ReadLine(), out var roomId))
+            {
+                var room = await _roomService.GetRoomByIdAsync(roomId);
 
+                if (room != null)
+                {
+                    Console.WriteLine($"\nDetaljer:\n{room}");
+                }
+                else
+                {
+                    Console.WriteLine("Rummet du söker finns inte.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Ogiltligt rumsId.");
+            }
+        }
     }
 }

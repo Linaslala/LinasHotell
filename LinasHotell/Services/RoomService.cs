@@ -12,9 +12,14 @@ namespace LinasHotell.Services
             _roomRepository = roomRepository;
         }
 
-        public async Task<List<RoomModel>> GetAllRoomsAsync()
+        public async Task<List<RoomModel>>? GetAllRoomsAsync()
         {
             return await _roomRepository.GetAllAsync();
+        }
+
+        public async Task<RoomModel>? GetRoomByIdAsync(int roomId)
+        {
+            return await _roomRepository.GetByIdAsync(roomId);
         }
 
     }
