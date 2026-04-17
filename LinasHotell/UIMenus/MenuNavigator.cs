@@ -23,6 +23,10 @@ public class MenuNavigator
                     await _roomMenu.ShowRoomMenuAsync();
                     break;
 
+                case MainMenuChoice.Gäst:
+                    await _guestMenu.ShowGuestMenuAsync();
+                    break;
+
                 case MainMenuChoice.Avsluta:
                     Environment.Exit(0);
                     break;

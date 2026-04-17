@@ -1,5 +1,5 @@
 ﻿using LinasHotell.Models;
-using LinasHotell.Services;
+using LinasHotell.Services.ServiceInterfaces;
 using Microsoft.IdentityModel.Tokens;
 using Spectre.Console;
 using System.Globalization;

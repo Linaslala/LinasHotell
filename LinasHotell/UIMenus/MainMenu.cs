@@ -13,7 +13,10 @@ public class MainMenu
         var choice = AnsiConsole.Prompt(
             new SelectionPrompt<MainMenuChoice>()
                 .Title("Välj:")
-                .AddChoices(MainMenuChoice.Rum, MainMenuChoice.Avsluta)
+                .AddChoices(
+                    MainMenuChoice.Rum, 
+                    MainMenuChoice.Gäst, 
+                    MainMenuChoice.Avsluta)
         );
 
         return Task.FromResult(choice);
