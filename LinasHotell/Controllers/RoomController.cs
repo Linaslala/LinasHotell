@@ -62,6 +62,18 @@ namespace LinasHotell.Controllers
 /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task AddRoomAsync()
         {
+            var addRoomTable = new Table()
+            .Border(TableBorder.Rounded)
+            .AddColumn("Rumsnummer", col => col.Centered())
+            .AddColumn("Rumstyp", col => col.Centered())
+            .AddColumn("Pris/natt", col => col.RightAligned())
+            .AddColumn("Max extrasängar", col => col.Centered())
+            .AddColumn("Bokningsbar", col => col.Centered());
+
+           addRoomTable.AddRow(" ", " ", " ", " ", " ");
+
+            AnsiConsole.Write(addRoomTable);
+
             var room = new RoomModel();
 
             var existingRooms = await _roomService.GetAllRoomsAsync();
