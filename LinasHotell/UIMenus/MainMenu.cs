@@ -14,8 +14,8 @@ public class MainMenu
             new SelectionPrompt<MainMenuChoice>()
                 .Title("Välj:")
                 .AddChoices(
-                    MainMenuChoice.Rum, 
-                    MainMenuChoice.Gäst, 
+                    MainMenuChoice.Rum,
+                    MainMenuChoice.Gäst,
                     MainMenuChoice.Avsluta)
         );
 

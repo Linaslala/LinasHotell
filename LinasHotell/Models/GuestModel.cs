@@ -25,6 +25,8 @@ namespace LinasHotell.Models
         [MaxLength(30)]
         public int? PhoneNumber { get; set; }
 
+        public bool IsCheckedIn { get; set; }
+
         //public List<BookingModel> Bookings { get; set; } = new();
     }
 }
