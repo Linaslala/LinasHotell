@@ -20,7 +20,7 @@ namespace LinasHotell.UIMenus
             {
                 var choice = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
-                    .Title("Välj:")
+                    .Title("Rumsmeny")
                     .AddChoices(
                         "Visa alla rum",
                         "Skapa nytt rum",
