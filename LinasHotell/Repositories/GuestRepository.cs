@@ -1,5 +1,6 @@
 ﻿using LinasHotell.Models;
 using LinasHotell.Repositories.RepositoryInterfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace LinasHotell.Repositories
 {
@@ -17,17 +18,6 @@ namespace LinasHotell.Repositories
 
             return guest;
         }
-
-        //BEHÖVS VÄL BARA OM DET SKA FINNAS EN SÖKFUNKTION PÅ RUMSNUMMER???
-
-        //public async Task<RoomModel?> GetByRoomNumberAsync(int roomNumber)
-        //{
-        //    var room = await _db.Rooms
-        //     .Where(r => r.RoomNumber == roomNumber)
-        //     .FirstOrDefaultAsync();
-
-        //    return room;
-        //}
 
         public async Task<List<GuestModel>> GetAllAsync()
         {
@@ -67,10 +57,10 @@ namespace LinasHotell.Repositories
             return guest;
         }
 
-        public async Task<GuestModel> DeleteAsync(int guestId)
-        {
+        //public async Task<GuestModel> DeleteAsync(int guestId)
+        //{
 
-        }
+        //}
 
     }
 }

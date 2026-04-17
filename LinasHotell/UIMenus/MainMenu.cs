@@ -3,6 +3,7 @@
 public enum MainMenuChoice
 {
     Rum,
+    Gäst,
     Avsluta
 }
 

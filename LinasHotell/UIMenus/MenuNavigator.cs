@@ -4,11 +4,13 @@ public class MenuNavigator
 {
     private readonly MainMenu _mainMenu;
     private readonly RoomMenu _roomMenu;
+    private readonly GuestMenu _guestMenu;
 
-    public MenuNavigator(MainMenu mainMenu, RoomMenu roomMenu)
+    public MenuNavigator(MainMenu mainMenu, RoomMenu roomMenu, GuestMenu guestMenu)
     {
         _mainMenu = mainMenu;
         _roomMenu = roomMenu;
+        _guestMenu = guestMenu;
     }
 
     public async Task RunAsync()

@@ -8,6 +8,8 @@ using LinasHotell.UIMenus;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using LinasHotell.Repositories.RepositoryInterfaces;
+using LinasHotell.Repositories;
 
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
