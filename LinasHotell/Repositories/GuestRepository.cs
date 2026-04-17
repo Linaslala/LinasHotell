@@ -31,7 +31,7 @@ namespace LinasHotell.Repositories
 
         public async Task<List<GuestModel>> GetAllAsync()
         {
-            var rooms = await _db.Guests
+            var guests = await _db.Guests
                 .OrderBy(g => g.GuestId)
                 .ToListAsync();
 
