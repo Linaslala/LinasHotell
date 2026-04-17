@@ -66,5 +66,11 @@ namespace LinasHotell.Repositories
 
             return guest;
         }
+
+        public async Task<GuestModel> DeleteAsync(int guestId)
+        {
+
+        }
+
     }
 }

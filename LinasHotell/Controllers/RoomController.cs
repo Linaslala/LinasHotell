@@ -401,7 +401,7 @@ namespace LinasHotell.Controllers
 
                 switch (choice)
                 {
-                    case "Välj rum":
+                    case "Välj rum (rumsnummer)":
                         var selectedRoom = Console.ReadLine();
 
                         if (!int.TryParse(selectedRoom, out int roomNumber))
