@@ -28,7 +28,7 @@ namespace LinasHotell.UIMenus
                         "Registrera ny gäst",
                         "Uppdatera gästinformation",
                         "Checka in/ut gäst",
-                        //"Radera gästinformation",
+                        "Radera gästinformation",
                         "Tillbaka till lobbyn"));
 
                 switch (choice)
@@ -49,9 +49,9 @@ namespace LinasHotell.UIMenus
                         await _guestController.SetGuestStatusAsync();
                         break;
 
-                    //case "Radera gästinformation":
-                    //    await _guestController.DeleteGuestAsync();
-                    //    break;
+                    case "Radera gästinformation":
+                        await _guestController.DeleteGuestAsync();
+                        break;
 
                     case "Tillbaka till lobbyn":
                         return;

@@ -14,19 +14,24 @@ namespace LinasHotell.Controllers
         {
             _roomService = roomService;
         }
-/// <summary>
-/// Displays a list of all rooms in a formatted table asynchronously.
-/// </summary>
-/// <remarks>If no rooms are available, a message is displayed to inform the user. The method waits for user input
-/// before returning to the previous menu.</remarks>
-/// <returns>A task that represents the asynchronous operation.</returns>
+        /// <summary>
+        /// Displays a list of all rooms in a formatted table asynchronously.
+        /// </summary>
+        /// <remarks>If no rooms are available, a message is displayed to inform the user. The method waits for user input
+        /// before returning to the previous menu.</remarks>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task ShowAllRoomsAsync()
         {
             var rooms = await _roomService.GetAllRoomsAsync();
 
             if (rooms.IsNullOrEmpty())
             {
-                AnsiConsole.MarkupLine("[Red]Det finns inga rum[/]");
+                AnsiConsole.MarkupLine("[red]Det finns inga rum registrerade.[/]\n");
+
+                AnsiConsole.MarkupLine("{[grey]}Tryck valfri tangent för att återgå till rumsmenyn.[/]");
+                AnsiConsole.Console.Input.ReadKey(false);
+                AnsiConsole.Clear();
+                return;
             }
             else
             {
@@ -46,20 +51,21 @@ namespace LinasHotell.Controllers
                 AnsiConsole.Write(table);
             }
 
-            Console.WriteLine("Tryck valfri tangent för att återgå till rumsmenyn:");
-            Console.ReadKey();
-            Console.Clear();
+            AnsiConsole.MarkupLine("{[grey]}Tryck valfri tangent för att återgå till rumsmenyn.[/]");
+            AnsiConsole.Console.Input.ReadKey(false);
+            AnsiConsole.Clear();
+            return;
         }
 
-/// <summary>
-/// Guides the user through an interactive process to create and add a new room, prompting for room details and
-/// validating input as needed.
-/// </summary>
-/// <remarks>This method prompts the user for room information, including room number, type, price per night,
-/// allowed extra beds, and bookable status. Input is validated to ensure correctness and uniqueness. After successful
-/// creation, the new room is added to the system and a summary is displayed. The method is intended for use in a
-/// console application with interactive user input.</remarks>
-/// <returns>A task that represents the asynchronous operation.</returns>
+        /// <summary>
+        /// Guides the user through an interactive process to create and add a new room, prompting for room details and
+        /// validating input as needed.
+        /// </summary>
+        /// <remarks>This method prompts the user for room information, including room number, type, price per night,
+        /// allowed extra beds, and bookable status. Input is validated to ensure correctness and uniqueness. After successful
+        /// creation, the new room is added to the system and a summary is displayed. The method is intended for use in a
+        /// console application with interactive user input.</remarks>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task AddRoomAsync()
         {
             var addRoomTable = new Table()
@@ -70,8 +76,6 @@ namespace LinasHotell.Controllers
             .AddColumn("Max extrasängar", col => col.Centered())
             .AddColumn("Bokningsbar", col => col.Centered());
 
-           addRoomTable.AddRow(" ", " ", " ", " ", " ");
-
             AnsiConsole.Write(addRoomTable);
 
             var room = new RoomModel();
@@ -79,7 +83,7 @@ namespace LinasHotell.Controllers
             var existingRooms = await _roomService.GetAllRoomsAsync();
 
             var roomNumber = AnsiConsole.Prompt(
-                new TextPrompt<int>("Ange [green]rumsnummer[/]:")
+                new TextPrompt<int>("Ange rumsnummer:")
                     .Validate(number =>
                     {
                         if (number < 1 || number > 999)
@@ -96,7 +100,7 @@ namespace LinasHotell.Controllers
 
             var roomType = AnsiConsole.Prompt(
                 new SelectionPrompt<RoomTypeEnums>()
-                    .Title("Ange [green]rumstyp[/]:")
+                    .Title("Ange rumstyp:")
                     .AddChoices(
                         RoomTypeEnums.Single,
                         RoomTypeEnums.Double,
@@ -106,7 +110,7 @@ namespace LinasHotell.Controllers
             room.RoomType = roomType;
 
             var pricePerNight = AnsiConsole.Prompt(
-                new TextPrompt<decimal>("Ange [green]pris per natt[/]:")
+                new TextPrompt<decimal>("Ange pris per natt:")
                     .Validate(price =>
                         price >= 1
                             ? ValidationResult.Success()
@@ -126,7 +130,7 @@ namespace LinasHotell.Controllers
             if (roomType != RoomTypeEnums.Single)
             {
                 var extraBedsAllowed = AnsiConsole.Prompt(
-                new TextPrompt<int>($"Ange [green]extra sängar[/] (0–{maxExtraBeds}):")
+                new TextPrompt<int>($"Ange extra sängar (0–{maxExtraBeds}):")
                     .Validate(beds =>
                         beds >= 0 && beds <= maxExtraBeds
                             ? ValidationResult.Success()
@@ -160,9 +164,10 @@ namespace LinasHotell.Controllers
 
             AnsiConsole.Write(table);
 
-            AnsiConsole.MarkupLine("\nTryck valfri tangent för att återgå till rumsmenyn.");
+            AnsiConsole.MarkupLine("{[grey]}Tryck valfri tangent för att återgå till rumsmenyn.[/]");
             AnsiConsole.Console.Input.ReadKey(false);
             AnsiConsole.Clear();
+            return;
         }
 
         /// <summary>
@@ -180,7 +185,11 @@ namespace LinasHotell.Controllers
 
             if (existingRooms.Count == 0)
             {
-                AnsiConsole.MarkupLine("[red]Inga rum hittades.[/]\n");
+                AnsiConsole.MarkupLine("[red]Det finns inga rum registrerade.[/]\n");
+
+                AnsiConsole.MarkupLine("{[grey]}Tryck valfri tangent för att återgå till rumsmenyn.[/]");
+                AnsiConsole.Console.Input.ReadKey(false);
+                AnsiConsole.Clear();
                 return;
             }
 
@@ -208,6 +217,7 @@ namespace LinasHotell.Controllers
             }
 
             AnsiConsole.Write(table);
+            Console.WriteLine();
 
             while (true)
             {
@@ -215,12 +225,12 @@ namespace LinasHotell.Controllers
                 new SelectionPrompt<string>()
                     .Title("Rumsmeny")
                     .AddChoices(
-                        "Välj rum",
+                        "Välj rum (rumsnummer)",
                         "Avbryt"));
 
                 switch (choice)
                 {
-                    case "Välj rum":
+                    case "Välj rum (rumsnummer)":
                         var selectedRoom = Console.ReadLine();
 
                         if (!int.TryParse(selectedRoom, out int roomNumber))
@@ -332,11 +342,10 @@ namespace LinasHotell.Controllers
 
                         AnsiConsole.Write(updatedRoomTable);
 
-                        AnsiConsole.MarkupLine("\nTryck valfri tangent för att återgå till rumsmenyn.");
+                        AnsiConsole.MarkupLine("{[grey]}Tryck valfri tangent för att återgå till rumsmenyn.[/]");
                         AnsiConsole.Console.Input.ReadKey(false);
                         AnsiConsole.Clear();
-
-                        break;
+                        return;
 
                     case "Avbryt":
                         AnsiConsole.Clear();
@@ -361,7 +370,11 @@ namespace LinasHotell.Controllers
 
             if (existingRooms.Count == 0)
             {
-                AnsiConsole.MarkupLine("[red]Inga rum hittades.[/]\n");
+                AnsiConsole.MarkupLine("[red]Det finns inga rum registrerade.[/]\n");
+
+                AnsiConsole.MarkupLine("{[grey]}Tryck valfri tangent för att återgå till rumsmenyn.[/]");
+                AnsiConsole.Console.Input.ReadKey(false);
+                AnsiConsole.Clear();
                 return;
             }
 
@@ -462,11 +475,10 @@ namespace LinasHotell.Controllers
 
                         AnsiConsole.Write(updatedRoomTable);
 
-                        AnsiConsole.MarkupLine("\nTryck valfri tangent för att återgå till rumsmenyn.");
+                        AnsiConsole.MarkupLine("{[grey]}Tryck valfri tangent för att återgå till rumsmenyn.[/]");
                         AnsiConsole.Console.Input.ReadKey(false);
                         AnsiConsole.Clear();
-
-                        break;
+                        return;
 
                     case "Avbryt":
                         AnsiConsole.Clear();

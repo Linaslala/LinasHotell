@@ -21,7 +21,12 @@ namespace LinasHotell.Controllers
 
             if (guests.IsNullOrEmpty())
             {
-                AnsiConsole.MarkupLine("[Red]Det finns inga gäster[/]");
+                AnsiConsole.MarkupLine("[red]Det finns inga gäster registrerade.[/]\n");
+
+                AnsiConsole.MarkupLine("[grey]Tryck valfri tangent för att återgå till gästmenyn.[/]");
+                AnsiConsole.Console.Input.ReadKey(false);
+                AnsiConsole.Clear();
+                return;
             }
             else
             {
@@ -46,9 +51,10 @@ namespace LinasHotell.Controllers
                 Console.WriteLine();
             }
 
-            Console.WriteLine("Tryck valfri tangent för att återgå till gästmenyn:");
-            Console.ReadKey();
-            Console.Clear();
+            AnsiConsole.MarkupLine("[grey]Tryck valfri tangent för att återgå till gästmenyn.[/]");
+            AnsiConsole.Console.Input.ReadKey(false);
+            AnsiConsole.Clear();
+            return;
         }
 
         //-------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -61,7 +67,7 @@ namespace LinasHotell.Controllers
                         .AddColumn("Efternamn", col => col.Centered())
                         .AddColumn("Telefon", col => col.Centered())
                         .AddColumn("Är incheckad", col => col.Centered());
-          
+
             AnsiConsole.Write(addGuestTable);
 
             var guest = new GuestModel();
@@ -147,7 +153,7 @@ namespace LinasHotell.Controllers
 
             await _guestService.AddGuestAsync(guest);
 
-            Console.WriteLine();
+            AnsiConsole.Clear();
 
             AnsiConsole.MarkupLine("[green]Gästen har registrerats![/]\n");
 
@@ -167,9 +173,10 @@ namespace LinasHotell.Controllers
 
             AnsiConsole.Write(table);
 
-            AnsiConsole.MarkupLine("\nTryck valfri tangent för att återgå till rumsmenyn.");
+            AnsiConsole.MarkupLine("[grey]Tryck valfri tangent för att återgå till gästmenyn.[/]");
             AnsiConsole.Console.Input.ReadKey(false);
             AnsiConsole.Clear();
+            return;
         }
         //------------------------------------------------------------------------------------------------------------------------------------------------
         public async Task UpdateGuestAsync()
@@ -178,17 +185,21 @@ namespace LinasHotell.Controllers
 
             if (existingGuests.Count == 0)
             {
-                AnsiConsole.MarkupLine("[red]Inga gäster hittades.[/]\n");
+                AnsiConsole.MarkupLine("[red]Det finns inga gäster registrerade.[/]\n");
+
+                AnsiConsole.MarkupLine("[grey]Tryck valfri tangent för att återgå till gästmenyn.[/]");
+                AnsiConsole.Console.Input.ReadKey(false);
+                AnsiConsole.Clear();
                 return;
             }
 
             var sortedGuests = existingGuests
-                    .OrderBy(g => g.FirstName)
+                    .OrderBy(g => g.GuestId)
                     .ToList();
 
             var table = new Table()
                     .Border(TableBorder.Rounded)
-                    .AddColumn("[GästId]", col => col.Centered())
+                    .AddColumn("GästId", col => col.Centered())
                     .AddColumn("Email", col => col.Centered())
                     .AddColumn("Förnamn", col => col.Centered())
                     .AddColumn("Efternamn", col => col.Centered())
@@ -208,15 +219,13 @@ namespace LinasHotell.Controllers
             AnsiConsole.Write(table);
             Console.WriteLine();
 
-            AnsiConsole.Write(table);
-
             while (true)
             {
                 var choice = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                     .Title("Gästmeny")
                     .AddChoices(
-                        "Välj gäst",
+                        "Välj gäst (Id)",
                         "Avbryt"));
 
                 switch (choice)
@@ -327,9 +336,9 @@ namespace LinasHotell.Controllers
 
                         guest.IsCheckedIn = newIsCheckedIn;
 
-                        await _guestService.AddGuestAsync(guest);
+                        await _guestService.UpdateGuestAsync(guest);
 
-                        Console.WriteLine();
+                        AnsiConsole.Clear();
 
                         AnsiConsole.MarkupLine("[green]Gästen har uppdaterats![/]\n");
 
@@ -349,11 +358,11 @@ namespace LinasHotell.Controllers
 
                         AnsiConsole.Write(updatedGuestTable);
 
-                        AnsiConsole.MarkupLine("\nTryck valfri tangent för att återgå till gästmenyn.");
+                        AnsiConsole.MarkupLine("[grey]Tryck valfri tangent för att återgå till gästmenyn.[/]");
                         AnsiConsole.Console.Input.ReadKey(false);
                         AnsiConsole.Clear();
 
-                        break;
+                        return;
 
                     case "Avbryt":
                         AnsiConsole.Clear();
@@ -370,7 +379,11 @@ namespace LinasHotell.Controllers
 
             if (existingGuests.Count == 0)
             {
-                AnsiConsole.MarkupLine("[red]Inga gäster hittades.[/]\n");
+                AnsiConsole.MarkupLine("[red]Det finns inga gäster registrerade.[/]\n");
+
+                AnsiConsole.MarkupLine("[grey]Tryck valfri tangent för att återgå till gästmenyn.[/]");
+                AnsiConsole.Console.Input.ReadKey(false);
+                AnsiConsole.Clear();
                 return;
             }
 
@@ -380,7 +393,7 @@ namespace LinasHotell.Controllers
 
             var table = new Table()
                     .Border(TableBorder.Rounded)
-                    .AddColumn("[GästId]", col => col.Centered())
+                    .AddColumn("GästId", col => col.Centered())
                     .AddColumn("Email", col => col.Centered())
                     .AddColumn("Förnamn", col => col.Centered())
                     .AddColumn("Efternamn", col => col.Centered())
@@ -400,15 +413,13 @@ namespace LinasHotell.Controllers
             AnsiConsole.Write(table);
             Console.WriteLine();
 
-            AnsiConsole.Write(table);
-
             while (true)
             {
                 var choice = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
-                    .Title("Gästmeny")
+                    .Title("Välj gäst")
                     .AddChoices(
-                        "Välj gäst",
+                        "Välj gäst (Id)",
                         "Avbryt"));
 
                 switch (choice)
@@ -453,7 +464,9 @@ namespace LinasHotell.Controllers
 
                         await _guestService.UpdateGuestAsync(guestStatus);
 
-                        AnsiConsole.MarkupLine("\n[green]Gästens status har uppdaterats![/]\n");
+                        AnsiConsole.Clear();
+
+                        AnsiConsole.MarkupLine("\n[green]Gästens incheckningsstatus har uppdaterats![/]\n");
 
                         var guestUpdatedTable = new Table()
                         .Border(TableBorder.Rounded)
@@ -471,11 +484,11 @@ namespace LinasHotell.Controllers
 
                         AnsiConsole.Write(guestUpdatedTable);
 
-                        AnsiConsole.MarkupLine("\nTryck valfri tangent för att återgå till rumsmenyn.");
+                        AnsiConsole.MarkupLine("[grey]Tryck valfri tangent för att återgå till gästmenyn.[/]");
                         AnsiConsole.Console.Input.ReadKey(false);
                         AnsiConsole.Clear();
 
-                        break;
+                        return;
 
                     case "Avbryt":
                         AnsiConsole.Clear();
@@ -490,7 +503,11 @@ namespace LinasHotell.Controllers
 
             if (existingGuests.Count == 0)
             {
-                AnsiConsole.MarkupLine("[red]Inga gäster hittades.[/]\n");
+                AnsiConsole.MarkupLine("[red]Det finns inga gäster registrerade.[/]\n");
+
+                AnsiConsole.MarkupLine("[grey]Tryck valfri tangent för att återgå till gästmenyn.[/]");
+                AnsiConsole.Console.Input.ReadKey(false);
+                AnsiConsole.Clear();
                 return;
             }
 
@@ -500,7 +517,7 @@ namespace LinasHotell.Controllers
 
             var table = new Table()
                     .Border(TableBorder.Rounded)
-                    .AddColumn("[GästId]", col => col.Centered())
+                    .AddColumn("GästId", col => col.Centered())
                     .AddColumn("Email", col => col.Centered())
                     .AddColumn("Förnamn", col => col.Centered())
                     .AddColumn("Efternamn", col => col.Centered())
@@ -520,20 +537,18 @@ namespace LinasHotell.Controllers
             AnsiConsole.Write(table);
             Console.WriteLine();
 
-            AnsiConsole.Write(table);
-
             while (true)
             {
                 var choice = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                     .Title("Gästmeny")
                     .AddChoices(
-                        "Välj gäst",
+                        "Välj gäst (Id)",
                         "Avbryt"));
 
                 switch (choice)
                 {
-                    case "Välj gäst [Id]":
+                    case "Välj gäst (Id)":
                         var selectedGuest = Console.ReadLine();
 
                         if (!int.TryParse(selectedGuest, out int guestId))
@@ -571,13 +586,52 @@ namespace LinasHotell.Controllers
 
                         if (!sureToDeletePrompt)
                         {
+                            AnsiConsole.Clear();
                             return;
                         }
 
                         await _guestService.DeleteGuestAsync(guestToDelete);
 
+                        AnsiConsole.Clear();
+
                         AnsiConsole.MarkupLine("\n[green]Gästens har raderats![/]\n");
-                        break;
+                        var guests = await _guestService.GetAllGuestsAsync();
+
+                        if (guests.IsNullOrEmpty())
+                        {
+                            AnsiConsole.MarkupLine("[red]Det finns inga gäster registrerade.[/]\n");
+
+                            AnsiConsole.MarkupLine("[grey]Tryck valfri tangent för att återgå till gästmenyn.[/]");
+                            AnsiConsole.Console.Input.ReadKey(false);
+                            AnsiConsole.Clear();
+                            return;
+                        }
+                        else
+                        {
+                            var registredGuestsTable = new Table()
+                                    .Border(TableBorder.Rounded)
+                                    .AddColumn("Förnamn", col => col.Centered())
+                                    .AddColumn("Efternamn", col => col.Centered())
+                                    .AddColumn("Email", col => col.Centered())
+                                    .AddColumn("Telefon", col => col.Centered())
+                                    .AddColumn("Är incheckad", col => col.Centered());
+
+                            foreach (var guest in guests.OrderBy(g => g.FirstName))
+                            {
+                                registredGuestsTable.AddRow(guest.FirstName,
+                                    guest.LastName,
+                                    guest.Email,
+                                    guest.PhoneNumber.ToString(),
+                                    guest.IsCheckedIn ? "Ja" : "Nej");
+                            }
+
+                            AnsiConsole.Write(registredGuestsTable);
+                            Console.WriteLine();
+                        }
+                        AnsiConsole.MarkupLine("[grey]Tryck valfri tangent för att återgå till gästmenyn.[/]");
+                        AnsiConsole.Console.Input.ReadKey(false);
+                        AnsiConsole.Clear();
+                        return;
 
                     case "Avbryt":
                         AnsiConsole.Clear();
