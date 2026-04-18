@@ -76,10 +76,18 @@ namespace LinasHotell.Controllers
 
             var guestEmail = AnsiConsole.Prompt(
                 new TextPrompt<string>("Ange emailadress:")
-                    .Validate(email =>
+                    .Validate(emailInput =>
                     {
-                        if (existingGuest.Any(g => g.Email == email))
+                        var email = emailInput.Trim();
+
+                        if (!IsValidEmail(email))
+                            return ValidationResult.Error("Ogiltig e-postadress.");
+
+                        if (existingGuest.Any(g =>
+                                string.Equals(g.Email?.Trim(), email, StringComparison.OrdinalIgnoreCase)))
+                        {
                             return ValidationResult.Error("Gästen finns redan i systemet.");
+                        }
 
                         return ValidationResult.Success();
                     })
@@ -173,7 +181,7 @@ namespace LinasHotell.Controllers
 
             AnsiConsole.Write(table);
 
-            AnsiConsole.MarkupLine("[grey]Tryck valfri tangent för att återgå till gästmenyn.[/]");
+            AnsiConsole.MarkupLine("\n[grey]Tryck valfri tangent för att återgå till gästmenyn.[/]");
             AnsiConsole.Console.Input.ReadKey(false);
             AnsiConsole.Clear();
             return;
@@ -187,11 +195,12 @@ namespace LinasHotell.Controllers
             {
                 AnsiConsole.MarkupLine("[red]Det finns inga gäster registrerade.[/]\n");
 
-                AnsiConsole.MarkupLine("[grey]Tryck valfri tangent för att återgå till gästmenyn.[/]");
+                AnsiConsole.MarkupLine("\n[grey]Tryck valfri tangent för att återgå till gästmenyn.[/]");
                 AnsiConsole.Console.Input.ReadKey(false);
                 AnsiConsole.Clear();
                 return;
             }
+
 
             var sortedGuests = existingGuests
                     .OrderBy(g => g.GuestId)
@@ -206,7 +215,7 @@ namespace LinasHotell.Controllers
                     .AddColumn("Telefon", col => col.Centered())
                     .AddColumn("Är incheckad", col => col.Centered());
 
-            foreach (var guest in sortedGuests.OrderBy(g => g.FirstName))
+            foreach (var guest in sortedGuests.OrderBy(g => g.GuestId))
             {
                 table.AddRow(guest.GuestId.ToString(),
                     guest.Email,
@@ -223,7 +232,7 @@ namespace LinasHotell.Controllers
             {
                 var choice = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
-                    .Title("Gästmeny")
+                    .Title("Uppdatera gästinformation")
                     .AddChoices(
                         "Välj gäst (Id)",
                         "Avbryt"));
@@ -259,15 +268,19 @@ namespace LinasHotell.Controllers
 
                         AnsiConsole.Write(guestToUpdateTable);
 
-                        var newGuestEmail = AnsiConsole.Prompt(
-                        new TextPrompt<string>("Ange emailadress:")
-                            .Validate(email =>
-                            {
-                                if (existingGuests.Any(g => g.Email == email))
-                                    return ValidationResult.Error("Gästen finns redan i systemet.");
+                        var existingGuest = await _guestService.GetAllGuestsAsync();
 
-                                return ValidationResult.Success();
-                            })
+                        var newGuestEmail = AnsiConsole.Prompt(
+                            new TextPrompt<string>("Ange emailadress:")
+                                .Validate(emailInput =>
+                                {
+                                    var email = emailInput.Trim();
+
+                                    if (!IsValidEmail(email))
+                                        return ValidationResult.Error("Ogiltig e-postadress.");
+
+                                    return ValidationResult.Success();
+                                })
                         );
 
                         guest.Email = newGuestEmail;
@@ -357,6 +370,8 @@ namespace LinasHotell.Controllers
                             guest.IsCheckedIn ? "Ja" : "Nej");
 
                         AnsiConsole.Write(updatedGuestTable);
+
+                        Console.WriteLine();
 
                         AnsiConsole.MarkupLine("[grey]Tryck valfri tangent för att återgå till gästmenyn.[/]");
                         AnsiConsole.Console.Input.ReadKey(false);
@@ -466,7 +481,7 @@ namespace LinasHotell.Controllers
 
                         AnsiConsole.Clear();
 
-                        AnsiConsole.MarkupLine("\n[green]Gästens incheckningsstatus har uppdaterats![/]\n");
+                        AnsiConsole.MarkupLine("[green]Gästens incheckningsstatus har uppdaterats![/]\n");
 
                         var guestUpdatedTable = new Table()
                         .Border(TableBorder.Rounded)
@@ -484,7 +499,7 @@ namespace LinasHotell.Controllers
 
                         AnsiConsole.Write(guestUpdatedTable);
 
-                        AnsiConsole.MarkupLine("[grey]Tryck valfri tangent för att återgå till gästmenyn.[/]");
+                        AnsiConsole.MarkupLine("\n[grey]Tryck valfri tangent för att återgå till gästmenyn.[/]");
                         AnsiConsole.Console.Input.ReadKey(false);
                         AnsiConsole.Clear();
 
@@ -541,7 +556,7 @@ namespace LinasHotell.Controllers
             {
                 var choice = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
-                    .Title("Gästmeny")
+                    .Title("Radera gästinformation")
                     .AddChoices(
                         "Välj gäst (Id)",
                         "Avbryt"));
@@ -579,7 +594,7 @@ namespace LinasHotell.Controllers
 
                         var sureToDeletePrompt = AnsiConsole.Prompt(
                             new SelectionPrompt<bool>()
-                                .Title("Är du säker på att du vill radera gästen? (Hard delete)\n")
+                                .Title("\nÄr du säker på att du vill radera gästen? (Hard delete)\n")
                                 .AddChoices(true, false)
                                 .UseConverter(value => value ? "Ja" : "Nej")
                         );
@@ -628,7 +643,7 @@ namespace LinasHotell.Controllers
                             AnsiConsole.Write(registredGuestsTable);
                             Console.WriteLine();
                         }
-                        AnsiConsole.MarkupLine("[grey]Tryck valfri tangent för att återgå till gästmenyn.[/]");
+                        AnsiConsole.MarkupLine("\n[grey]Tryck valfri tangent för att återgå till gästmenyn.[/]");
                         AnsiConsole.Console.Input.ReadKey(false);
                         AnsiConsole.Clear();
                         return;
@@ -639,6 +654,27 @@ namespace LinasHotell.Controllers
                 }
             }
         }
+        //----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public static bool IsValidEmail(string email)
+        {
+            var trimmedEmail = email.Trim();
+
+            if (trimmedEmail.EndsWith(".", StringComparison.Ordinal))
+            {
+                return false;
+            }
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == trimmedEmail;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
     }
 }
 
