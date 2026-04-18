@@ -19,17 +19,6 @@ namespace LinasHotell.Repositorys
             return room;
         }
 
-        //BEHÖVS VÄL BARA OM DET SKA FINNAS EN SÖKFUNKTION PÅ RUMSNUMMER???
-
-        //public async Task<RoomModel?> GetByRoomNumberAsync(int roomNumber)
-        //{
-        //    var room = await _db.Rooms
-        //     .Where(r => r.RoomNumber == roomNumber)
-        //     .FirstOrDefaultAsync();
-
-        //    return room;
-        //}
-
         public async Task<List<RoomModel>> GetAllAsync()
         {
             var rooms = await _db.Rooms

@@ -1,6 +1,6 @@
 ﻿using LinasHotell.Models;
 
-namespace LinasHotell.Services
+namespace LinasHotell.Services.ServiceInterfaces
 {
     public interface IRoomService
     {

@@ -1,5 +1,6 @@
 ﻿using LinasHotell.Models;
 using LinasHotell.Repositories.Interfaces;
+using LinasHotell.Services.ServiceInterfaces;
 
 namespace LinasHotell.Services
 {
