@@ -37,9 +37,9 @@ namespace LinasHotell.Services
             return await _guestRepository.SetStatusAsync(guestId, isCheckedIn);
         }
 
-        //public async Task<GuestModel> DeleteGuestAsync(int guestId)
-        //{
-        //    return await _guestRepository.DeleteAsync(guestId);
-        //}
+        public async Task DeleteGuestAsync(GuestModel guestToDelete)
+        {
+            await _guestRepository.DeleteAsync(guestToDelete);
+        }
     }
 }

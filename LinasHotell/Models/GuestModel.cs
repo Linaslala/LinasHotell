@@ -27,6 +27,7 @@ namespace LinasHotell.Models
 
         public bool IsCheckedIn { get; set; }
 
+       
         //public List<BookingModel> Bookings { get; set; } = new();
     }
 }

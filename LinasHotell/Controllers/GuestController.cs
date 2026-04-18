@@ -61,9 +61,7 @@ namespace LinasHotell.Controllers
                         .AddColumn("Efternamn", col => col.Centered())
                         .AddColumn("Telefon", col => col.Centered())
                         .AddColumn("Är incheckad", col => col.Centered());
-
-            addGuestTable.AddRow(" ", " ", " ", " ", " ");
-
+          
             AnsiConsole.Write(addGuestTable);
 
             var guest = new GuestModel();
@@ -377,7 +375,7 @@ namespace LinasHotell.Controllers
             }
 
             var sortedGuests = existingGuests
-                    .OrderBy(g => g.FirstName)
+                    .OrderBy(g => g.GuestId)
                     .ToList();
 
             var table = new Table()
@@ -485,11 +483,108 @@ namespace LinasHotell.Controllers
                 }
             }
         }
-//----------------------------------------------------------------------------------------------------------------------------------------------------------
-        //public async Task<GuestModel> DeleteGuestAsync(int guestId)
-        //{
+        //----------------------------------------------------------------------------------------------------------------------------------------------------------
+        public async Task DeleteGuestAsync()
+        {
+            var existingGuests = await _guestService.GetAllGuestsAsync();
 
-        //}
+            if (existingGuests.Count == 0)
+            {
+                AnsiConsole.MarkupLine("[red]Inga gäster hittades.[/]\n");
+                return;
+            }
+
+            var sortedGuests = existingGuests
+                    .OrderBy(g => g.GuestId)
+                    .ToList();
+
+            var table = new Table()
+                    .Border(TableBorder.Rounded)
+                    .AddColumn("[GästId]", col => col.Centered())
+                    .AddColumn("Email", col => col.Centered())
+                    .AddColumn("Förnamn", col => col.Centered())
+                    .AddColumn("Efternamn", col => col.Centered())
+                    .AddColumn("Telefon", col => col.Centered())
+                    .AddColumn("Är incheckad", col => col.Centered());
+
+            foreach (var guest in sortedGuests.OrderBy(g => g.GuestId))
+            {
+                table.AddRow(guest.GuestId.ToString(),
+                    guest.Email,
+                    guest.FirstName,
+                    guest.LastName,
+                    guest.PhoneNumber.ToString(),
+                    guest.IsCheckedIn ? "Ja" : "Nej");
+            }
+
+            AnsiConsole.Write(table);
+            Console.WriteLine();
+
+            AnsiConsole.Write(table);
+
+            while (true)
+            {
+                var choice = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("Gästmeny")
+                    .AddChoices(
+                        "Välj gäst",
+                        "Avbryt"));
+
+                switch (choice)
+                {
+                    case "Välj gäst [Id]":
+                        var selectedGuest = Console.ReadLine();
+
+                        if (!int.TryParse(selectedGuest, out int guestId))
+                        {
+                            AnsiConsole.MarkupLine("\n[red]Ogiltigt gästId.[/]\n");
+                            break;
+                        }
+
+                        var guestToDelete = existingGuests.FirstOrDefault(g => g.GuestId == guestId);
+
+                        AnsiConsole.Clear();
+
+                        var guestToDeleteTable = new Table()
+                            .Border(TableBorder.Rounded)
+                            .AddColumn("Email", col => col.Centered())
+                            .AddColumn("Förnamn", col => col.Centered())
+                            .AddColumn("Efternamn", col => col.Centered())
+                            .AddColumn("Telefon", col => col.Centered())
+                            .AddColumn("Är incheckad", col => col.Centered());
+
+                        guestToDeleteTable.AddRow(guestToDelete.Email,
+                            guestToDelete.FirstName,
+                            guestToDelete.LastName,
+                            guestToDelete.PhoneNumber.ToString(),
+                            guestToDelete.IsCheckedIn ? "Ja" : "Nej");
+
+                        AnsiConsole.Write(guestToDeleteTable);
+
+                        var sureToDeletePrompt = AnsiConsole.Prompt(
+                            new SelectionPrompt<bool>()
+                                .Title("Är du säker på att du vill radera gästen? (Hard delete)\n")
+                                .AddChoices(true, false)
+                                .UseConverter(value => value ? "Ja" : "Nej")
+                        );
+
+                        if (!sureToDeletePrompt)
+                        {
+                            return;
+                        }
+
+                        await _guestService.DeleteGuestAsync(guestToDelete);
+
+                        AnsiConsole.MarkupLine("\n[green]Gästens har raderats![/]\n");
+                        break;
+
+                    case "Avbryt":
+                        AnsiConsole.Clear();
+                        return;
+                }
+            }
+        }
     }
 }
 

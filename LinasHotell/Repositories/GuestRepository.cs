@@ -46,7 +46,8 @@ namespace LinasHotell.Repositories
         {
             var guest = await GetByIdAsync(guestId);
 
-            if (guest is null) return null;
+            if (guest is null)
+                return null;
 
             if (guest.IsCheckedIn == isCheckedIn)
                 return guest;
@@ -57,10 +58,13 @@ namespace LinasHotell.Repositories
             return guest;
         }
 
-        //public async Task<GuestModel> DeleteAsync(int guestId)
-        //{
+        public async Task DeleteAsync(GuestModel guestToDelete)
+        {           
+            if (guestToDelete is null)
+                return;
 
-        //}
-
+            _db.Guests.Remove(guestToDelete);
+            await _db.SaveChangesAsync();
+        }
     }
 }
