@@ -1,0 +1,75 @@
+﻿using LinasHotell.Models;
+using LinasHotell.Repositories.RepositoryInterfaces;
+using Microsoft.EntityFrameworkCore;
+
+namespace LinasHotell.Repositories
+{
+    public class GuestRepository : IGuestRepository
+    {
+        private readonly ApplicationDbContext _db;
+
+        public GuestRepository(ApplicationDbContext db) => _db = db;
+
+        public async Task<GuestModel?> GetByIdAsync(int guestId)
+        {
+            var guest = await _db.Guests
+                .Where(g => g.GuestId == guestId)
+                .FirstOrDefaultAsync();
+
+            return guest;
+        }
+
+        public async Task<List<GuestModel>> GetAllAsync()
+        {
+            var guests = await _db.Guests
+                .OrderBy(g => g.GuestId)
+                .ToListAsync();
+
+            return guests;
+        }
+
+        public async Task<GuestModel> AddAsync(GuestModel guest)
+        {
+            _db.Guests.Add(guest);
+            await _db.SaveChangesAsync();
+
+            return guest;
+        }
+
+        public async Task UpdateAsync(GuestModel guest)
+        {
+            _db.Guests.Update(guest);
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task<GuestModel?> SetStatusAsync(int guestId, bool isCheckedIn)
+        {
+            var guest = await GetByIdAsync(guestId);
+
+            if (guest is null)
+                return null;
+
+            if (guest.IsCheckedIn == isCheckedIn)
+                return guest;
+
+            guest.IsCheckedIn = isCheckedIn;
+            await UpdateAsync(guest);
+
+            return guest;
+        }
+
+        public async Task DeleteAsync(GuestModel guestToDelete)
+        {
+            if (guestToDelete is null)
+                return;
+
+            _db.Guests.Remove(guestToDelete);
+            await _db.SaveChangesAsync();
+        }
+        public async Task<bool> HasBookingsAsync(int guestId)
+        {
+            return await _db.Bookings
+                .AnyAsync(b => b.GuestId == guestId);
+        }
+    }
+}
