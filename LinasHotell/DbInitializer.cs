@@ -12,10 +12,10 @@ namespace LinasHotell
 
             var rooms = new List<RoomModel>
             {
-                new() { RoomNumber = 101, RoomType = RoomTypeEnums.Single, ExtraBedsAllowed = 0, PricePerNight = 750 },
-                new() { RoomNumber = 102, RoomType = RoomTypeEnums.Double, ExtraBedsAllowed = 1, PricePerNight = 1100 },
-                new() { RoomNumber = 201, RoomType = RoomTypeEnums.Double, ExtraBedsAllowed = 1, PricePerNight = 1200 },
-                new() { RoomNumber = 301, RoomType = RoomTypeEnums.Suite, ExtraBedsAllowed = 2,  PricePerNight = 2200 }
+                new() { RoomNumber = 101, RoomType = RoomTypeEnums.Single, ExtraBedsAllowed = 0, PricePerNight = 750, IsBookable = true },
+                new() { RoomNumber = 102, RoomType = RoomTypeEnums.Double, ExtraBedsAllowed = 1, PricePerNight = 1100, IsBookable = true },
+                new() { RoomNumber = 201, RoomType = RoomTypeEnums.Double, ExtraBedsAllowed = 1, PricePerNight = 1200, IsBookable = true },
+                new() { RoomNumber = 301, RoomType = RoomTypeEnums.Suite, ExtraBedsAllowed = 2,  PricePerNight = 2200, IsBookable = true }
             };
 
             db.Rooms.AddRange(rooms);
