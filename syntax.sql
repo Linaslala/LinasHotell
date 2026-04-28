@@ -1,3 +1,4 @@
+﻿
 -- Hämta alla gäster --
 SELECT * 
 FROM Guests
@@ -23,3 +24,6 @@ FROM Rooms
 -- Visa unika rumstyper --
 SELECT DISTINCT RoomType
 FROM Rooms
+
+
+
