@@ -13,7 +13,14 @@ namespace LinasHotell.Controllers
         {
             _guestService = guestService;
         }
-        //---------------------------------------------------------------------------------------------------------------------------------------------
+        /// <summary>
+        /// Displays a list of all registered guests asynchronously in a formatted table. If no guests are registered,
+        /// shows an appropriate message to the user.
+        /// </summary>
+        /// <remarks>This method interacts with the console to present guest information and waits for
+        /// user input before returning to the guest menu. The display includes guest details such as first name, last
+        /// name, email, phone number, and check-in status.</remarks>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task ShowAllGuestsAsync()
         {
             var guests = await _guestService.GetAllGuestsAsync();
@@ -56,8 +63,13 @@ namespace LinasHotell.Controllers
             AnsiConsole.Clear();
             return;
         }
-
-        //-------------------------------------------------------------------------------------------------------------------------------------------------------------
+        /// <summary>
+        /// Prompts the user to enter guest information and adds a new guest to the system asynchronously.
+        /// </summary>
+        /// <remarks>This method interacts with the console to collect guest details, validates user
+        /// input, and displays confirmation upon successful registration. The method prevents duplicate guests based on
+        /// email address and enforces validation rules for each field.</remarks>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task AddGuestAsync()
         {
             var addGuestTable = new Table()
@@ -188,7 +200,14 @@ namespace LinasHotell.Controllers
             AnsiConsole.Clear();
             return;
         }
-        //------------------------------------------------------------------------------------------------------------------------------------------------
+        /// <summary>
+        /// Guides the user through updating the information of an existing guest by displaying a list of registered
+        /// guests and prompting for new details.
+        /// </summary>
+        /// <remarks>If no guests are registered, the method notifies the user and returns without making
+        /// changes. The method interacts with the console to display guest information and collect updated values.
+        /// Input validation is performed for each field to ensure data integrity.</remarks>
+        /// <returns>A task that represents the asynchronous update operation.</returns>
         public async Task UpdateGuestAsync()
         {
             var existingGuests = await _guestService.GetAllGuestsAsync();
@@ -390,7 +409,14 @@ namespace LinasHotell.Controllers
 
             }
         }
-        //----------------------------------------------------------------------------------------------------------------------------------------------------
+        /// <summary>
+        /// Displays a list of registered guests and allows the user to update the check-in status of a selected guest
+        /// asynchronously.
+        /// </summary>
+        /// <remarks>If no guests are registered, a message is displayed and the operation is canceled.
+        /// The method presents an interactive prompt for selecting and updating a guest's check-in status. The console
+        /// is cleared at various stages to enhance user experience.</remarks>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task SetGuestStatusAsync()
         {
             var existingGuests = await _guestService.GetAllGuestsAsync();
@@ -517,7 +543,14 @@ namespace LinasHotell.Controllers
                 }
             }
         }
-        //----------------------------------------------------------------------------------------------------------------------------------------------------------
+        /// <summary>
+        /// Deletes a guest from the system after user confirmation and validation checks.
+        /// </summary>
+        /// <remarks>This method displays a list of registered guests and prompts the user to select a
+        /// guest to delete. A guest cannot be deleted if they are currently checked in or have active bookings. The
+        /// method provides user feedback and confirmation prompts throughout the process. The guest list is refreshed
+        /// after a successful deletion.</remarks>
+        /// <returns>A task that represents the asynchronous delete operation.</returns>
         public async Task DeleteGuestAsync()
         {
             var existingGuests = await _guestService.GetAllGuestsAsync();
@@ -696,8 +729,13 @@ namespace LinasHotell.Controllers
                 }
             }
         }
-        //----------------------------------------------------------------------------------------------------------------------------------------------------------
-
+        /// <summary>
+        /// Determines whether the specified string is a valid email address format.
+        /// </summary>
+        /// <remarks>The validation checks for standard email address formatting and ignores leading or
+        /// trailing whitespace. Email addresses ending with a period are considered invalid.</remarks>
+        /// <param name="email">The email address to validate. Leading and trailing whitespace is ignored.</param>
+        /// <returns>true if the email parameter is in a valid email address format; otherwise, false.</returns>
         public static bool IsValidEmail(string email)
         {
             var trimmedEmail = email.Trim();

@@ -1,7 +1,6 @@
 ﻿using LinasHotell.Models;
 using LinasHotell.Services.ServiceInterfaces;
 using LinasHotell.Utilities;
-using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 using Microsoft.IdentityModel.Tokens;
 using Spectre.Console;
 
@@ -19,7 +18,12 @@ namespace LinasHotell.Controllers
             _guestService = guestService;
             _roomService = roomService;
         }
-        //---------------------------------------------------------------------------------------------------------------------------------------------
+        /// <summary>
+        /// Displays all existing bookings in a formatted table asynchronously.
+        /// </summary>
+        /// <remarks>If no bookings are found, a message is displayed to inform the user. The method
+        /// pauses for user input before returning to the previous menu.</remarks>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task ShowAllBookingsAsync()
         {
             var bookings = await _bookingService.GetAllBookingsAsync();
@@ -71,8 +75,15 @@ namespace LinasHotell.Controllers
             AnsiConsole.Clear();
             return;
         }
-
-        //-------------------------------------------------------------------------------------------------------------------------------------------------------------
+        /// <summary>
+        /// Guides the user through the process of creating and adding a new booking asynchronously, including guest
+        /// selection, date selection, room assignment, and extra bed options.
+        /// </summary>
+        /// <remarks>This method interacts with the console to prompt the user for input at each step of
+        /// the booking process. The operation can be canceled by the user at any prompt. If no guests or rooms are
+        /// available, the method informs the user and returns without creating a booking.</remarks>
+        /// <returns>A task that represents the asynchronous operation. The task completes when the booking process is finished
+        /// or canceled.</returns>
         public async Task AddBookingAsync()
         {
             var booking = new BookingModel();
@@ -173,7 +184,7 @@ namespace LinasHotell.Controllers
                             return;
                         }
 
-                        AnsiConsole.Write(new Rule($"[yellow]Tillgängliga rum {booking.CheckOutDate:yyy-MM-dd} - {booking.CheckOutDate:yyy-MM-dd}[/]")
+                        AnsiConsole.Write(new Rule($"[yellow]Tillgängliga rum {booking.CheckInDate:yyy-MM-dd} - {booking.CheckOutDate:yyy-MM-dd}[/]")
                         {
                             Justification = Justify.Left
                         });
@@ -272,7 +283,15 @@ namespace LinasHotell.Controllers
 
             }
         }
-        // ---------------------------------------------------------------------------------------------------------------------------------------------------
+         /// <summary>
+         /// Updates an existing booking by allowing the user to modify booking details such as dates, room selection, and extra
+         /// beds.
+         /// </summary>
+         /// <remarks>This method displays all current bookings and prompts the user to select a booking to update. If no
+         /// bookings exist, the method notifies the user and returns. The user can update booking dates, choose to keep or
+         /// change the room, and adjust extra beds as needed. The method provides feedback and confirmation throughout the
+         /// process. User interaction is required via the console.</remarks>
+         /// <returns>A task that represents the asynchronous update operation.</returns>
         public async Task UpdateBookingAsync()
         {
             var existingBookings = await _bookingService.GetAllBookingsAsync();
@@ -343,6 +362,12 @@ namespace LinasHotell.Controllers
 
                         var booking = existingBookings.FirstOrDefault(b => b.BookingId == bookingId);
 
+                        if (booking == null)
+                        {
+                            AnsiConsole.MarkupLine("\n[red]Ingen bokning hittades med det bokningsnumret.[/]\n");
+                            break;
+                        }
+
                         AnsiConsole.Clear();
 
                         var bookingToUpdateTable = new Table()
@@ -367,16 +392,103 @@ namespace LinasHotell.Controllers
                         AnsiConsole.Write(bookingToUpdateTable);
 
                         var existingBooking = await _bookingService.GetAllBookingsAsync();
-                        
+
                         booking.CheckInDate = CalendarPicker.PickDate(DateTime.Today, "Välj nytt incheckningsdatum");
-                        
+
                         booking.CheckOutDate = CalendarPicker.PickDate(booking.CheckInDate.AddDays(1), "Välj nytt utcheckningsdatum");
 
                         AnsiConsole.Clear();
 
+                        var currentRoom = await _roomService.GetRoomByIdAsync(booking.RoomId);
+
+                        if (currentRoom != null)
+                        {
+                            AnsiConsole.Write(new Rule("[yellow]Nuvarande rum på bokningen[/]") { Justification = Justify.Left });
+                            var currentRoomTable = new Table()
+                                .Border(TableBorder.Rounded)
+                                .AddColumn("Rumsnummer", c => c.Centered())
+                                .AddColumn("Rumstyp", c => c.Centered())
+                                .AddColumn("Pris kr/natt", c => c.RightAligned())
+                                .AddColumn("Max extrasängar", c => c.Centered());
+
+                            currentRoomTable.AddRow(
+                                currentRoom.RoomNumber.ToString(),
+                                currentRoom.RoomType.ToString(),
+                                currentRoom.PricePerNight.ToString(),
+                                currentRoom.ExtraBedsAllowed.ToString()
+                            );
+
+                            AnsiConsole.Write(currentRoomTable);
+                            AnsiConsole.WriteLine();
+
+                            var keepSameRoom = AnsiConsole.Prompt(
+                            new SelectionPrompt<bool>()
+                                .Title("Vill du behålla samma rum?")
+                                .AddChoices(true, false)
+                                .UseConverter(v => v ? "Ja (behåll samma rum)" : "Nej (välj annat rum)")
+                            );
+
+                            if (keepSameRoom)
+                            {
+                                var roomsIfKeeping = await _roomService.GetAvailableRoomsAsync(
+                                    booking.CheckInDate,
+                                    booking.CheckOutDate,
+                                    booking.BookingId
+                                );
+
+                                var canKeepThisRoom = roomsIfKeeping.Any(r => r.RoomId == booking.RoomId);
+
+                                if (!canKeepThisRoom)
+                                {
+                                    AnsiConsole.MarkupLine("[red]Det nuvarande rummet är inte tillgängligt för de nya datumen.[/]\n");
+                                    AnsiConsole.MarkupLine("[grey]Välj ett annat rum.[/]\n");
+                                }
+                                else
+                                {
+                                    AnsiConsole.MarkupLine("[green]Rummet behålls.[/]\n");
+
+                                    await UpdateExtraBedsForRoomAsync(booking, currentRoom.RoomNumber);
+
+                                    AnsiConsole.Clear();
+
+                                    await _bookingService.UpdateBookingAsync(booking);
+
+                                    AnsiConsole.MarkupLine("[green]Bokning har uppdaterats![/]");
+
+                                    var newBookingTable = new Table()
+                                        .Border(TableBorder.Rounded)
+                                        .AddColumn("Gäst", col => col.RightAligned())
+                                        .AddColumn("Incheckningsdatum", col => col.Centered())
+                                        .AddColumn("Utcheckningsdatum", col => col.Centered())
+                                        .AddColumn("Rum", col => col.RightAligned())
+                                        .AddColumn("Extrasängar", col => col.Centered())
+                                        .AddColumn("Antal nätter", col => col.Centered())
+                                        .AddColumn("Pris kr", col => col.Centered());
+
+                                    newBookingTable.AddRow(
+                                        booking.Guest?.ToString() ?? "",
+                                        booking.CheckInDate.ToString("yyyy-MM-dd"),
+                                        booking.CheckOutDate.ToString("yyyy-MM-dd"),
+                                        booking.Room?.ToString() ?? "",
+                                        booking.ExtraBeds.ToString(),
+                                        booking.Nights.ToString(),
+                                        booking.TotalPrice.ToString()
+                                    );
+
+                                    AnsiConsole.Write(newBookingTable);
+
+                                    AnsiConsole.MarkupLine("\n[grey]Tryck valfri tangent för att återgå till bokningsmenyn.[/]");
+                                    AnsiConsole.Console.Input.ReadKey(false);
+                                    AnsiConsole.Clear();
+                                    return;
+                                }
+                            }
+                        }
+
                         var availableRooms = await _roomService.GetAvailableRoomsAsync(
                             booking.CheckInDate,
-                            booking.CheckOutDate);
+                            booking.CheckOutDate,
+                            booking.BookingId);
 
                         if (availableRooms.Count == 0)
                         {
@@ -387,7 +499,7 @@ namespace LinasHotell.Controllers
                             return;
                         }
 
-                        AnsiConsole.Write(new Rule($"[yellow]Tillgängliga rum {booking.CheckOutDate:yyy-MM-dd} - {booking.CheckOutDate:yyy-MM-dd}[/]")
+                        AnsiConsole.Write(new Rule($"[yellow]Tillgängliga rum {booking.CheckInDate:yyy-MM-dd} - {booking.CheckOutDate:yyy-MM-dd}[/]")
                         {
                             Justification = Justify.Left
                         });
@@ -413,7 +525,7 @@ namespace LinasHotell.Controllers
                         AnsiConsole.Write(availableRoomsTable);
 
                         var selectedNewRoomNumber = AnsiConsole.Prompt(
-                            new TextPrompt<int>("Ange nytt rumsNummer: ")
+                            new TextPrompt<int>("Ange nytt rumsnummer: ")
                                 .ValidationErrorMessage("[red]Ogiltigt rumsnummer.[/]")
                                 .Validate(roomNumber => roomNumber > 0 && availableRooms.Any(r => r.RoomNumber == roomNumber))
                         );
@@ -425,26 +537,7 @@ namespace LinasHotell.Controllers
 
                         AnsiConsole.Clear();
 
-                        var room = await _roomService.GetByRoomNumberAsync(selectedNewRoomNumber);
-
-                        int maxExtraBeds = room.ExtraBedsAllowed;
-
-                        if (maxExtraBeds == 0)
-                        {
-                            booking.ExtraBeds = 0;
-                        }
-                        else
-                        {
-                            var newExtraBeds = AnsiConsole.Prompt(
-                                new TextPrompt<int>("Ange nytt antal extra sängar: ")
-                                    .ValidationErrorMessage("[red]Ogiltigt antal extra sängar.[/]")
-                                    .Validate(beds =>
-                                        beds >= 0 && beds <= maxExtraBeds
-                                            ? ValidationResult.Success()
-                                            : ValidationResult.Error($"För {room.RoomType} är max {maxExtraBeds} extrasäng(ar).")));
-
-                            booking.ExtraBeds = newExtraBeds;
-                        }
+                        await UpdateExtraBedsForRoomAsync(booking, selectedNewRoomNumber);
 
                         AnsiConsole.Clear();
 
@@ -485,6 +578,14 @@ namespace LinasHotell.Controllers
                 }
             }
         }
+        /// <summary>
+        /// Deletes a booking selected by the user from the list of existing bookings.
+        /// </summary>
+        /// <remarks>If there are no bookings to delete, the method notifies the user and returns
+        /// immediately. The user is prompted to select a booking to delete or to cancel the operation. After deletion,
+        /// the updated list of bookings is displayed. This method interacts with the console and requires user
+        /// input.</remarks>
+        /// <returns>A task that represents the asynchronous delete operation.</returns>
         public async Task DeleteBookingAsync()
         {
             var existingBookings = await _bookingService.GetAllBookingsAsync();
@@ -652,6 +753,38 @@ namespace LinasHotell.Controllers
                 }
             }
         }
+        /// <summary>
+        /// Prompts the user to update the number of extra beds for a specified room in the given booking, ensuring the
+        /// value does not exceed the room's allowed limit.
+        /// </summary>
+        /// <remarks>If the room does not allow extra beds, the number of extra beds in the booking is set
+        /// to 0. The user is prompted to enter a value within the allowed range for extra beds.</remarks>
+        /// <param name="booking">The booking model to update with the new number of extra beds.</param>
+        /// <param name="roomNumber">The room number identifying which room's extra bed count to update.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        private async Task UpdateExtraBedsForRoomAsync(BookingModel booking, int roomNumber)
+        {
+            var room = await _roomService.GetByRoomNumberAsync(roomNumber);
+
+            int maxExtraBeds = room.ExtraBedsAllowed;
+
+            if (maxExtraBeds == 0)
+            {
+                booking.ExtraBeds = 0;
+                return;
+            }
+
+            var newExtraBeds = AnsiConsole.Prompt(
+                new TextPrompt<int>("Ange nytt antal extra sängar: ")
+                    .ValidationErrorMessage("[red]Ogiltigt antal extra sängar.[/]")
+                    .Validate(beds =>
+                        beds >= 0 && beds <= maxExtraBeds
+                            ? ValidationResult.Success()
+                            : ValidationResult.Error($"För {room.RoomType} är max {maxExtraBeds} extrasäng(ar).")));
+
+            booking.ExtraBeds = newExtraBeds;
+        }
     }
 }
+
 

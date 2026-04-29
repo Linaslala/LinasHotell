@@ -32,22 +32,10 @@ namespace LinasHotell.Services
 
         public async Task<RoomModel> AddRoomAsync(RoomModel room)
         {
-            //var rooms = await _roomRepository.GetAllAsync();
-            //var roomExists = rooms.Any(r => r.RoomNumber == room.RoomNumber);
-
-            //if (roomExists)
-            //    throw new Exception("Ett rum med detta rumsnummer finns redan.");
-
             return await _roomRepository.AddAsync(room);
         }
         public async Task UpdateRoomAsync(RoomModel room)
         {
-            //var rooms = await _roomRepository.GetAllAsync();
-            //var roomExists = rooms.Any(r => r.RoomNumber == room.RoomNumber);
-
-            //if (roomExists)
-            //    throw new InvalidOperationException("Ett rum med detta rumsnummer finns redan.");
-
             await _roomRepository.UpdateAsync(room);
         }
 
@@ -57,22 +45,25 @@ namespace LinasHotell.Services
         }
 
 
-        public async Task<List<RoomModel>> GetAvailableRoomsAsync(DateTime checkIn, DateTime checkOut)
+        public async Task<List<RoomModel>> GetAvailableRoomsAsync(DateTime checkIn, DateTime checkOut, int? excludeBookingId = null)
         {
-            if (checkOut <= checkIn)
-                return new List<RoomModel>();
+            if (checkOut <= checkIn) return new List<RoomModel>();
 
             var rooms = await _roomRepository.GetAllAsync();
             var bookings = await _bookingRepository.GetAllAsync();
 
             var unavailableRoomIds = bookings
-                            .Where(b => b.CheckInDate < checkOut && b.CheckOutDate > checkIn)
-                            .Select(b => b.RoomId)
-                            .Distinct()
-                            .ToHashSet();
+                .Where(b =>
+                    (excludeBookingId == null || b.BookingId != excludeBookingId) &&
+                    b.CheckInDate < checkOut &&
+                    b.CheckOutDate > checkIn)
+                .Select(b => b.RoomId)
+                .Distinct()
+                .ToHashSet();
 
-
-            return rooms.Where(r => r.IsBookable && !unavailableRoomIds.Contains(r.RoomId)).ToList();
+            return rooms
+                .Where(r => r.IsBookable && !unavailableRoomIds.Contains(r.RoomId))
+                .ToList();
         }
     }
 }
