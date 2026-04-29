@@ -90,7 +90,11 @@ Databasens struktur beskrivs i filen `LinasHotell_ERD.drawio`.
 3. Välj eller klistra in filens GitHub-länk
 
 Relationer:
-Room kan ha många Bokningar. En Bokning kan ha ett, och bara ett, Rum.
-Gäst kan ha många Bokningar. En Bokning kan ha en, och bara en, Gäst
+
+Room kan ha många Bookings. 
+
+En Booking kan ha ett, och bara ett, Room.
+
+Guest kan ha många Bookings. En Booking kan ha en, och bara en, Guest.
 
 
