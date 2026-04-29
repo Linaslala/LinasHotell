@@ -366,9 +366,7 @@ namespace LinasHotell.Controllers
                         AnsiConsole.Clear();
                         return;
                 }
-
             }
-
         }
 
         /// <summary>

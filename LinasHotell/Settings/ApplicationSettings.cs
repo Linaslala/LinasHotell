@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace LinasHotell.Settings
+﻿namespace LinasHotell.Settings
 {
     public class ApplicationSettings
     {

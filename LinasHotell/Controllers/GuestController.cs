@@ -158,10 +158,7 @@ namespace LinasHotell.Controllers
                     })
             );
 
-            if (int.TryParse(phoneNumber, out var parsedNumber))
-            {
-                guest.PhoneNumber = parsedNumber;
-            }
+            guest.PhoneNumber = phoneNumber;
 
             var isCheckedIn = AnsiConsole.Prompt(
                             new SelectionPrompt<bool>()
@@ -357,10 +354,7 @@ namespace LinasHotell.Controllers
                                 })
                             );
 
-                        if (int.TryParse(newPhoneNumber, out var newParsedNumber))
-                        {
-                            guest.PhoneNumber = newParsedNumber;
-                        }
+                        guest.PhoneNumber = newPhoneNumber;
 
                         var newIsCheckedIn = AnsiConsole.Prompt(
                                         new SelectionPrompt<bool>()
@@ -754,7 +748,6 @@ namespace LinasHotell.Controllers
                 return false;
             }
         }
-
     }
 }
 

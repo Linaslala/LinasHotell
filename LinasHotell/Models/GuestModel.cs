@@ -20,7 +20,7 @@ namespace LinasHotell.Models
         public string Email { get; set; } = string.Empty;
 
         [MaxLength(30)]
-        public int? PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
 
         public bool IsCheckedIn { get; set; }
 
