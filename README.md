@@ -77,3 +77,15 @@ Mocrosoft.Extensions.Configuration.Json(10.0.6)
 Microsoft.Extensions.DependencyInjection(10.0.6)
 
 Spectre.Console(0.55.0)
+
+------------------------------------------------------
+
+ERD:
+
+Databasens struktur beskrivs i filen `LinasHotell_ERD.drawio` som kan öppnas i https://app.diagrams.net.
+
+Relationer:
+Room kan ha många Bokningar. En Bokning kan ha ett, och bara ett, Rum.
+Gäst kan ha många Bokningar. En Bokning kan ha en, och bara en, Gäst
+
+
