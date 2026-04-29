@@ -23,17 +23,17 @@ var services = new ServiceCollection();
 services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-services.AddSingleton<IRoomService, RoomService>();
-services.AddSingleton<IGuestService, GuestService>();
-services.AddSingleton<IBookingService, BookingService>();
+services.AddScoped<IRoomService, RoomService>();
+services.AddScoped<IGuestService, GuestService>();
+services.AddScoped<IBookingService, BookingService>();
 
-services.AddSingleton<IRoomRepository, RoomRepository>();
-services.AddSingleton<IGuestRepository, GuestRepository>();
-services.AddSingleton<IBookingRepository, BookingRepository>();
+services.AddScoped<IRoomRepository, RoomRepository>();
+services.AddScoped<IGuestRepository, GuestRepository>();
+services.AddScoped<IBookingRepository, BookingRepository>();
 
-services.AddSingleton<RoomController>();
-services.AddSingleton<GuestController>();
-services.AddSingleton<BookingController>();
+services.AddScoped<RoomController>();
+services.AddScoped<GuestController>();
+services.AddScoped<BookingController>();
 
 services.AddTransient<MainMenu>();
 services.AddTransient<RoomMenu>();
@@ -46,6 +46,7 @@ var provider = services.BuildServiceProvider();
 using var scope = provider.CreateScope();
 var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
+await db.Database.MigrateAsync();
 await DbInitializer.SeedAsync(db);
 
 var navigator = provider.GetRequiredService<MenuNavigator>();

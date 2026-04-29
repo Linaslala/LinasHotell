@@ -1,5 +1,4 @@
 ﻿using LinasHotell.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace LinasHotell
 {
