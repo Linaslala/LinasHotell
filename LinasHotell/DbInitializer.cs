@@ -23,10 +23,10 @@ namespace LinasHotell
 
             var guests = new List<GuestModel>
             {
-                new() { Email = "lina.sk.mail@gmail.com", FirstName = "Lina", LastName = "Samuelsson", PhoneNumber = 0701111111, IsCheckedIn = false },
-                new() { Email = "tomas@wejskog.com", FirstName = "Tomas", LastName = "Wejskog", PhoneNumber = 0701111112, IsCheckedIn = false},
-                new() { Email = "levi@samuelsson.com", FirstName = "Levi", LastName = "Samuelsson", PhoneNumber = 0701111113, IsCheckedIn = false},
-                new() { Email = "tor@wejskog.com", FirstName = "Tor", LastName = "Wejskog", PhoneNumber = 0701111114, IsCheckedIn = true},
+                new() { Email = "lina.sk.mail@gmail.com", FirstName = "Lina", LastName = "Samuelsson", PhoneNumber = "0701111111", IsCheckedIn = false },
+                new() { Email = "tomas@wejskog.com", FirstName = "Tomas", LastName = "Wejskog", PhoneNumber = "0701111112", IsCheckedIn = false},
+                new() { Email = "levi@samuelsson.com", FirstName = "Levi", LastName = "Samuelsson", PhoneNumber = "0701111113", IsCheckedIn = false},
+                new() { Email = "tor@wejskog.com", FirstName = "Tor", LastName = "Wejskog", PhoneNumber = "0701111114", IsCheckedIn = true},
             };
 
             db.Guests.AddRange(guests);
