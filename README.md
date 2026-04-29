@@ -95,6 +95,8 @@ Room kan ha många Bookings.
 
 En Booking kan ha ett, och bara ett, Room.
 
-Guest kan ha många Bookings. En Booking kan ha en, och bara en, Guest.
+Guest kan ha många Bookings. 
+
+En Booking kan ha en, och bara en, Guest.
 
 
