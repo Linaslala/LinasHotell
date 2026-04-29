@@ -1,6 +1,5 @@
 # LinasHotell
 
-<<<<<<< HEAD
 LinasHotell är en konsolbaserad hotellapplikation skriven i C#.  
 Systemet används för att hantera gäster, rum och bokningar i ett mindre hotell.
 
@@ -64,9 +63,6 @@ Start & konfiguration:
   - huvudmenyn startas
 
 ------------------------------------------------------
-=======
-
->>>>>>> b41a789 (IsBookable har lagts till i DbInitializer när rummen seedas.)
 
 Nugetpaket:
 
@@ -89,7 +85,3 @@ Mocrosoft.Extensions.Configuration.Json(10.0.6)
 Microsoft.Extensions.DependencyInjection(10.0.6)
 
 Spectre.Console(0.55.0)
-
-
-
->>>>>>> b41a789 (IsBookable har lagts till i DbInitializer när rummen seedas.)
