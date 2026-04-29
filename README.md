@@ -82,7 +82,12 @@ Spectre.Console(0.55.0)
 
 ERD:
 
-Databasens struktur beskrivs i filen `LinasHotell_ERD.drawio` som kan öppnas i https://app.diagrams.net.
+Databasens struktur beskrivs i filen `LinasHotell_ERD.drawio`. 
+
+Öppna det via:
+1. https://app.diagrams.net
+2. File → Open From → GitHub / URL
+3. Välj eller klistra in filens GitHub-länk
 
 Relationer:
 Room kan ha många Bokningar. En Bokning kan ha ett, och bara ett, Rum.
