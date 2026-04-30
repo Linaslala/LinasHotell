@@ -4,6 +4,56 @@
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
+        <mxCell id="I_uc3XwoERlOLffxDGTR-16" parent="1" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;rounded=1;fontSize=14;fontStyle=0;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;arcSize=4;whiteSpace=wrap;html=1;" value="Guest" vertex="1">
+          <mxGeometry height="190" width="270" x="70" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="I_uc3XwoERlOLffxDGTR-17" parent="I_uc3XwoERlOLffxDGTR-16" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;whiteSpace=wrap;" value="&lt;div style=&quot;font-family: &amp;quot;Segoe UI&amp;quot;; font-size: 14px; line-height: 20px;&quot;&gt;&lt;div style=&quot;line-height: 20px;&quot;&gt;&lt;div style=&quot;line-height: 20px;&quot;&gt;&lt;div style=&quot;line-height: 20px;&quot;&gt;PK GuestId &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;/span&gt;: &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;int&amp;nbsp;&lt;/div&gt;&lt;div style=&quot;line-height: 20px;&quot;&gt;FirstName &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;/span&gt;: &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;nvarchar(120)&amp;nbsp;&lt;/div&gt;&lt;div style=&quot;line-height: 20px;&quot;&gt;LastName &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;/span&gt;: &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;nvarchar(120)&amp;nbsp;&lt;/div&gt;&lt;div style=&quot;line-height: 20px;&quot;&gt;Email &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;/span&gt;: &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;nvarchar(160)&amp;nbsp;&lt;/div&gt;&lt;div style=&quot;line-height: 20px;&quot;&gt;PhoneNumber &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;: &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;nvarchar(30)&amp;nbsp;&lt;/div&gt;&lt;div style=&quot;line-height: 20px;&quot;&gt;IsCheckedIn &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;/span&gt;: &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;bit&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="270" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="I_uc3XwoERlOLffxDGTR-20" parent="1" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;rounded=1;fontSize=14;fontStyle=0;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;arcSize=4;whiteSpace=wrap;html=1;" value="Room" vertex="1">
+          <mxGeometry height="190" width="270" x="480" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="I_uc3XwoERlOLffxDGTR-21" parent="I_uc3XwoERlOLffxDGTR-20" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;whiteSpace=wrap;" value="&lt;div style=&quot;font-family: &amp;quot;Segoe UI&amp;quot;; font-size: 14px; line-height: 20px;&quot;&gt;&lt;div style=&quot;line-height: 20px;&quot;&gt;&lt;div style=&quot;line-height: 20px;&quot;&gt;&lt;div style=&quot;line-height: 20px;&quot;&gt;&lt;div style=&quot;line-height: 20px;&quot;&gt;PK RoomId &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;: &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;int&amp;nbsp;&lt;/div&gt;&lt;div style=&quot;line-height: 20px;&quot;&gt;RoomNumber &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;: &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;int&amp;nbsp;&lt;/div&gt;&lt;div style=&quot;line-height: 20px;&quot;&gt;RoomType &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;: &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;int (enum)&amp;nbsp;&lt;/div&gt;&lt;div style=&quot;line-height: 20px;&quot;&gt;PricePerNight &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;: &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;decimal(10,2) ExtraBedsAllowed &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;: &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;int&amp;nbsp;&lt;/div&gt;&lt;div style=&quot;line-height: 20px;&quot;&gt;IsBookable&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;: &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;bit&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="140" width="270" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="I_uc3XwoERlOLffxDGTR-23" parent="1" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;rounded=1;fontSize=14;fontStyle=0;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;arcSize=4;whiteSpace=wrap;html=1;" value="Booking" vertex="1">
+          <mxGeometry height="210" width="310" x="259" y="375" as="geometry" />
+        </mxCell>
+        <mxCell id="I_uc3XwoERlOLffxDGTR-24" parent="I_uc3XwoERlOLffxDGTR-23" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;whiteSpace=wrap;" value="&lt;div style=&quot;font-family: &amp;quot;Segoe UI&amp;quot;; font-size: 14px; line-height: 20px;&quot;&gt;&lt;div style=&quot;line-height: 20px;&quot;&gt;&lt;div style=&quot;line-height: 20px;&quot;&gt;&lt;div style=&quot;line-height: 20px;&quot;&gt;&lt;div style=&quot;line-height: 20px;&quot;&gt;PK BookingId &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;: &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;int&amp;nbsp;&lt;/div&gt;&lt;div style=&quot;line-height: 20px;&quot;&gt;FK GuestId &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;: &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;int&amp;nbsp;&lt;/div&gt;&lt;div style=&quot;line-height: 20px;&quot;&gt;FK RoomId&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;/span&gt;: &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;int&amp;nbsp;&lt;/div&gt;&lt;div style=&quot;line-height: 20px;&quot;&gt;CheckInDate &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;: &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;datetime&amp;nbsp;&lt;/div&gt;&lt;div style=&quot;line-height: 20px;&quot;&gt;CheckOutDate &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;: &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;datetime&amp;nbsp;&lt;/div&gt;&lt;div style=&quot;line-height: 20px;&quot;&gt;ExtraBeds &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;: &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;int&amp;nbsp;&lt;/div&gt;&lt;div style=&quot;line-height: 20px;&quot;&gt;TotalPrice &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;: &lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;decimal(10,2) (derived)&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="160" width="310" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="I_uc3XwoERlOLffxDGTR-25" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;fontSize=12;html=1;endArrow=ERzeroToMany;endFill=1;rounded=0;elbow=vertical;exitX=0.001;exitY=0.203;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.003;entryY=0.094;entryDx=0;entryDy=0;entryPerimeter=0;" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <Array as="points">
+              <mxPoint x="69.07" y="150" />
+              <mxPoint x="39.07" y="150" />
+              <mxPoint x="39.07" y="440" />
+            </Array>
+            <mxPoint x="69.33999999999997" y="148.57000000000005" as="sourcePoint" />
+            <mxPoint x="259.00000000000006" y="440.03999999999996" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="I_uc3XwoERlOLffxDGTR-27" edge="1" parent="1" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERzeroToMany;endFill=1;rounded=0;entryX=1.003;entryY=0.094;entryDx=0;entryDy=0;entryPerimeter=0;" target="I_uc3XwoERlOLffxDGTR-24" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <mxPoint x="750" y="150" as="sourcePoint" />
+            <mxPoint x="850" y="50" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="I_uc3XwoERlOLffxDGTR-34" edge="1" parent="1" source="I_uc3XwoERlOLffxDGTR-23" style="edgeStyle=orthogonalEdgeStyle;fontSize=12;html=1;endArrow=ERmandOne;rounded=0;exitX=0.403;exitY=-0.004;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.003;entryY=0.13;entryDx=0;entryDy=0;entryPerimeter=0;" target="I_uc3XwoERlOLffxDGTR-17" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <mxPoint x="370.6599999999999" y="347.30999999999995" as="sourcePoint" />
+            <mxPoint x="456.34" y="230" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="I_uc3XwoERlOLffxDGTR-35" edge="1" parent="1" source="I_uc3XwoERlOLffxDGTR-23" style="edgeStyle=orthogonalEdgeStyle;fontSize=12;html=1;endArrow=ERmandOne;rounded=0;exitX=0.537;exitY=0.004;exitDx=0;exitDy=0;exitPerimeter=0;entryX=-0.009;entryY=0.124;entryDx=0;entryDy=0;entryPerimeter=0;" target="I_uc3XwoERlOLffxDGTR-21" value="">
+          <mxGeometry height="100" relative="1" width="100" as="geometry">
+            <Array as="points">
+              <mxPoint x="426" y="177" />
+            </Array>
+            <mxPoint x="463" y="336" as="sourcePoint" />
+            <mxPoint x="426" y="150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
